@@ -1,7 +1,7 @@
 package no.elhub.tools.autorelease
 
 enum class ProjectType {
-    UNDEFINED,
+    GENERIC,
     GRADLE,
     MAVEN,
     ANSIBLE

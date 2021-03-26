@@ -1,20 +1,27 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jfrog.gradle.plugin.artifactory.dsl.ArtifactoryPluginConvention
+import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 
 plugins {
     kotlin("jvm") version "1.4.31"
-    maven
     id("com.github.ben-manes.versions") version "0.36.0"
+    id("jacoco")
     id("com.adarshr.test-logger") version "2.1.1"
     id("io.qameta.allure") version "2.8.1"
+    id("com.jfrog.artifactory") version "4.18.3"
+    id("maven-publish") apply true
 }
 
+val teamcityVersion = "2020.2.2"
 val allureVersion = "2.13.8"
 val kotestVersion = "4.4.1"
 val mockkVersion = "1.10.6"
 val jgitVersion = "5.11.0.202103091610-r"
+val mavenPubName = "mavenJavaBinary"
 
+group="no.elhub.tools"
 description = "Implement automated semantic release for gradle, maven and ansible projects."
 val mainClassName = "no.elhub.tools.autorelease.AutoReleaseKt"
 
@@ -52,7 +59,6 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-
 /*
  * Test setup
  */
@@ -62,6 +68,18 @@ tasks.withType<Test> {
         events("passed", "skipped", "failed")
         showStandardStreams = true
     }
+}
+
+jacoco {
+    toolVersion = "0.8.4" // Has to be the same as TeamCity
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
 }
 
 testlogger {
@@ -80,9 +98,9 @@ allure {
 }
 
 /*
- * Application Code
+ * Publishing
  * - Create a fat jar for deployment
- * - Run it after the jar commnad and as part of the assemble task
+ * - Run it after the jar command and as part of the assemble task
  */
 val fatJar = task("fatJar", type = Jar::class) {
     archiveBaseName.set(rootProject.name)
@@ -98,3 +116,34 @@ val fatJar = task("fatJar", type = Jar::class) {
 }
 
 tasks.get("assemble").dependsOn(tasks.get("fatJar"))
+
+publishing {
+    publications {
+        create<MavenPublication>(mavenPubName) {
+            from(components["java"])
+        }
+    }
+}
+
+artifactory {
+    setContextUrl("https://jfrog.elhub.cloud/artifactory")
+    publish(delegateClosureOf<PublisherConfig> {
+        repository(delegateClosureOf<groovy.lang.GroovyObject> {
+            setProperty("repoKey", project.findProperty("binaryrepo") ?: "elhub-bin-test-local")
+            setProperty("username", project.findProperty("mavenuser") ?: "nouser")
+            setProperty("password", project.findProperty("mavenpass") ?: "nopass")
+        })
+        defaults(delegateClosureOf<groovy.lang.GroovyObject> {
+            invokeMethod("publications", mavenPubName)
+            setProperty("publishArtifacts", true)
+            setProperty("publishPom", false)
+        })
+    })
+    resolve(delegateClosureOf<org.jfrog.gradle.plugin.artifactory.dsl.ResolverConfig> {
+        setProperty("repoKey", "repo")
+    })
+}
+
+tasks.get("artifactoryPublish").dependsOn(tasks.get("assemble"))
+
+tasks.get("publish").dependsOn(tasks.get("artifactoryPublish"))

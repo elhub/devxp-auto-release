@@ -22,8 +22,8 @@ class AutoRelease : Callable<Int> {
 
     @CommandLine.Option(
         names = ["-p", "--project"],
-        description = ["The type of project. Valid options are: gradle, maven (defaults to maven)"])
-    var project = "maven"
+        description = ["The type of project. Valid options are: generic, gradle, maven"])
+    var project = "generic"
 
     override fun call(): Int {
         val type: ProjectType

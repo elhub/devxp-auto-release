@@ -110,7 +110,7 @@
         <dependency>
             <groupId>no.elhub.common</groupId>
             <artifactId>common-build-configuration</artifactId>
-            <version>0.2.9-SNAPSHOT</version>
+            <version>0.3.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
