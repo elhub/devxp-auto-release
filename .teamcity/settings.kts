@@ -15,6 +15,7 @@ import no.elhub.common.build.configuration.UnitTestGradle
 import no.elhub.common.build.configuration.AssembleGradle
 import no.elhub.common.build.configuration.AutoRelease
 import no.elhub.common.build.configuration.constants.GlobalTokens
+import no.elhub.common.build.configuration.ProjectType
 
 version = "2020.2"
 
@@ -56,6 +57,7 @@ project {
             AutoRelease(
                 AutoRelease.Config(
                     vcsRoot = DslContext.settingsRoot,
+                    type = ProjectType.GRADLE,
                     trigger = VcsTrigger()
                 )
             )
