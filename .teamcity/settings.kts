@@ -24,14 +24,6 @@ project {
         param("teamcity.ui.settings.readOnly", "true")
     }
 
-    val bitbucketAuth = BuildFeatures()
-    bitbucketAuth.feature(
-        SshAgent {
-            teamcitySshKey = "teamcity_git_rsa"
-            param("secure:passphrase", GlobalTokens.bitbucketSshPassphrase)
-        })
-
-
     val buildChain = sequential {
 
         buildType(
@@ -64,8 +56,7 @@ project {
             AutoRelease(
                 AutoRelease.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    trigger = VcsTrigger(),
-                    buildFeatures = bitbucketAuth
+                    trigger = VcsTrigger()
                 )
             )
         )
