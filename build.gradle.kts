@@ -21,7 +21,6 @@ val mockkVersion = "1.10.6"
 val jgitVersion = "5.11.0.202103091610-r"
 val mavenPubName = "mavenJavaBinary"
 
-group="no.elhub.tools"
 description = "Implement automated semantic release for gradle, maven and ansible projects."
 val mainClassName = "no.elhub.tools.autorelease.AutoReleaseKt"
 
