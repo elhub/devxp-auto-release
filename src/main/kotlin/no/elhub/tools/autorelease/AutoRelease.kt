@@ -37,11 +37,6 @@ class AutoRelease : Callable<Int> {
         val repository = VersionedRepository(Paths.get(path).toFile())
         println("Current version: ${repository.currentVersion}")
         println("Unprocessed messages: ${repository.untaggedMessages.size}")
-        /*
-        repository.untaggedMessages.forEach {
-            println("\t$it")
-        }
-         */
         val currentVersion = repository.currentVersion
         val increaseVersion = VersionBump.analyze(repository.untaggedMessages)
         println("Setting version...")
@@ -70,6 +65,12 @@ class AutoRelease : Callable<Int> {
                 )
                 publishCommand = StandardPattern.mavenPublish
             }
+            ProjectType.ANSIBLE, ProjectType.GENERIC -> {
+                // For ansible and generic projects, we currently don't need to update any files
+                // and no publishing is done (for now). As such, the only thing that happens by
+                // default is to tag the repository, if the appropriate commit message is pushed
+                publishCommand = ""
+            }
             else -> {
                 println("Currently auto-release does not handle projects of this type.")
                 exitProcess(1)
@@ -77,11 +78,14 @@ class AutoRelease : Callable<Int> {
         }
         if (nextVersion != currentVersion) {
             repository.setTag("v$nextVersionString")
-            println("Publish release...")
-            Runtime.getRuntime().exec(publishCommand)
+            if (publishCommand.isNotEmpty()) {
+                println("Publish release...")
+                Runtime.getRuntime().exec(publishCommand)
+            }
         }
         return 0
     }
 }
 
+@Suppress("SpreadOperator")
 fun main(args: Array<String>): Unit = exitProcess(CommandLine(AutoRelease()).execute(*args))
