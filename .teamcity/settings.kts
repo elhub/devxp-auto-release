@@ -13,6 +13,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.version
 import no.elhub.common.build.configuration.Assemble
 import no.elhub.common.build.configuration.AutoRelease
 import no.elhub.common.build.configuration.ProjectType
+import no.elhub.common.build.configuration.ProjectType.GRADLE
 import no.elhub.common.build.configuration.SonarScan
 import no.elhub.common.build.configuration.UnitTest
 import no.elhub.common.build.configuration.constants.GlobalTokens
@@ -40,9 +41,8 @@ project {
             SonarScan(
                 SonarScan.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    sonarId = "no.elhub.tools:dev-tools-auto-release",
-                    sonarProjectSources = "src/main",
-                    sonarProjectTests = "src/test"
+                    type = GRADLE,
+                    sonarId = "no.elhub.tools:dev-tools-auto-release"
                 )
             )
         )
@@ -56,23 +56,22 @@ project {
             )
         )
 
+        val githubAuth = SshAgent({
+            teamcitySshKey = "teamcity_github_rsa"
+            param("secure:passphrase", GlobalTokens.githubSshPassphrase)
+        })
+
+
         buildType(
             AutoRelease(
                 AutoRelease.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    type = ProjectType.GRADLE
+                    type = ProjectType.GRADLE,
+                    sshAgent = githubAuth
                 )
             ) {
+
                 VcsTrigger ()
-
-                features {
-
-                    sshAgent {
-                        teamcitySshKey = "teamcity_github_rsa"
-                        param("secure:passphrase", GlobalTokens.githubSshPassphrase)
-                    }
-
-                }
 
             })
 
