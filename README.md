@@ -1,12 +1,14 @@
 # auto-release
 
 <!-- PROJECT SHIELDS -->
-<!--
-*** Add Project Shields here. Several of Elhubs systems provide shields, so why not use them to give info at a glance.
-*** [TeamCity Builds][SonarQube Quality Gate][SonarQube Vulnerabilities][SonarQube bugs][SonarQube smells][SonarQube Coverage]
--->
+![TeamCity Build](https://teamcity.elhub.cloud/app/rest/builds/buildType:(id:Tools_DevToolsAutoRelease_AutoRelease)/statusIcon)
+[![Quality Gate Status](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=alert_status)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
+[![Lines of Code](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=ncloc)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
 
-<!-- TABLE OF CONTENTS -->
+[![Vulnerabilities](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=vulnerabilities)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
+[![Bugs](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=bugs)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
+[![Code Smells](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=code_smells)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
+
 ## Table of Contents
 
 * [About](#about)
@@ -15,11 +17,10 @@
   * [Installation](#installation)
 * [Usage](#usage)
 * [Testing](#testing)
-* [Issues](link-to-issues)
-* [Contributing](link-to-contributing-file)
-* [License](link-to-license-file)
-* [Owners](link-to-codeowners-file)
-* [Meta](#meta)
+* [Roadmap](#roadmap)
+* [Contributing](#contributing)
+* [Owners](#owners)
+* [License](#license)
 
 
 ## About
@@ -35,24 +36,25 @@
 
 ## Getting Started
 
-Building the application will generate a runnable jar. 
-
 ### Prerequisites
 
-* Java 1.8 or later.
+This application requires Java 1.8 or later. In addition, auto-release must be run in a directory with an initialized git repository.
 
 ### Installation
 
-Build and test the application code using the gradle wrapper:
+The latest version can be downloaded from Elhub's internal artifactory under _elhub-bin/auto-release/_.
+
+To build the current version, run:
 
 ```sh
-./gradlew build
+./gradlew assemble
 ```
 
-The runnable jar produced can then be deployed where-ever you need it (typically on your CI/CD agents).
+To publish the executable jar to artifactory, run:
 
-Elhub employees can download the latest build of the application from the internal artifact provider.
-
+```sh
+./gradlew publish
+```
 
 ## Usage
 
@@ -61,8 +63,8 @@ To run the project on the existing repository for a gradle project, use:
 java -jar auto-release.jar . -p gradle
 ```
 
-The positional parameter can be used to specify the working directory to analyze. The "-p" option is used to specify which type of project that is being
-analyzed.
+The positional parameter can be used to specify the working directory to analyze. The "-p" option is used to
+specify which type of project that is being analyzed.
 
 The app works by analyzing the new version from Git, and then writes the next version into the appropriate file used by the project type it is working on. The 
 file with the updated version does _not_ need to be committed to git, though you can of course do so if you prefer. Note that the actual number present in the
@@ -100,13 +102,18 @@ The full suite of tests can be run using:
 
 ## Roadmap
 
-
-
-
 See the [open issues](https://jira.elhub.cloud/link-to-issues) for a list of proposed features (and known issues).
 
+## Contributing
 
-<!-- META -->
-## Meta
+Contributing, issues and feature requests are welcome. See the
+[Contributing](https://github.com/elhub/dev-tools-auto-release/blob/main/CONTRIBUTING.md) file.
 
-* [Relevant Link](https://elhub.cloud)
+## Owners
+
+This project is developed by [Elhub](https://github.com/elhub). For the specific development group responsible for this
+code, see the [Codeowners](https://github.com/elhub/dev-tools-auto-release/blob/main/CODEOWNERS) file.
+
+## License
+
+This project is [MIT](https://github.com/elhub/dev-tools-auto-release/blob/main/LICENSE.md) licensed.
