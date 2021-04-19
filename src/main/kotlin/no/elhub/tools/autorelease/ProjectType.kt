@@ -4,5 +4,6 @@ enum class ProjectType {
     GENERIC,
     GRADLE,
     MAVEN,
+    NPM,
     ANSIBLE
 }

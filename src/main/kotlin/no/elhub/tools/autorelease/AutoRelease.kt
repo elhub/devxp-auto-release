@@ -65,6 +65,14 @@ class AutoRelease : Callable<Int> {
                 )
                 publishCommand = StandardPattern.mavenPublish
             }
+            ProjectType.NPM -> {
+                VersionFile.setVersion(
+                    Paths.get("package.json"),
+                    StandardPattern.npmVersion,
+                    String.format(StandardPattern.npmFormat, nextVersionString)
+                )
+                publishCommand = StandardPattern.npmPublish
+            }
             ProjectType.ANSIBLE, ProjectType.GENERIC -> {
                 // For ansible and generic projects, we currently don't need to update any files
                 // and no publishing is done (for now). As such, the only thing that happens by
