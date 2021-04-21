@@ -1,4 +1,4 @@
-package no.elhub.tools.autorelease
+package no.elhub.tools.autorelease.config
 
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session

@@ -1,4 +1,4 @@
-package no.elhub.tools.autorelease
+package no.elhub.tools.autorelease.config
 
 object Configuration {
     const val startingVersion = "0.1.0"

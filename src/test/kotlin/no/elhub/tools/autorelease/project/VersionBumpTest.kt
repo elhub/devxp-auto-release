@@ -1,7 +1,8 @@
-package no.elhub.tools.autorelease
+package no.elhub.tools.autorelease.project
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import no.elhub.tools.autorelease.project.VersionBump
 
 class VersionBumpTest : DescribeSpec({
 

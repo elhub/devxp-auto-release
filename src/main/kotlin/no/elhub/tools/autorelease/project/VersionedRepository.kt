@@ -1,11 +1,11 @@
-package no.elhub.tools.autorelease
+package no.elhub.tools.autorelease.project
 
+import no.elhub.tools.autorelease.config.Configuration
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
-import org.eclipse.jgit.transport.JschConfigSessionFactory
 import java.io.File
 import java.io.IOException
 import java.util.*

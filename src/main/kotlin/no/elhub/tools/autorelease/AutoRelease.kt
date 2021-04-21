@@ -1,5 +1,9 @@
 package no.elhub.tools.autorelease
 
+import no.elhub.tools.autorelease.project.ProjectType
+import no.elhub.tools.autorelease.project.VersionBump
+import no.elhub.tools.autorelease.project.VersionFile
+import no.elhub.tools.autorelease.project.VersionedRepository
 import picocli.CommandLine
 import java.nio.file.Paths
 import java.util.concurrent.Callable

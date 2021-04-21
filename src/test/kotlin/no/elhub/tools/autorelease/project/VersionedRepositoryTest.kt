@@ -1,14 +1,12 @@
-package no.elhub.tools.autorelease
+package no.elhub.tools.autorelease.project
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
+import no.elhub.tools.autorelease.project.Version
+import no.elhub.tools.autorelease.project.VersionedRepository
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import java.io.File
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class VersionedRepositoryTest : DescribeSpec({
     val tempFolderPath = File("build/test-git/")

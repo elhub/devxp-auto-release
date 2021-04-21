@@ -1,6 +1,5 @@
-package no.elhub.common.build.configuration
+package no.elhub.tools.autorelease.project
 
-import no.elhub.tools.autorelease.Version
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.core.spec.style.DescribeSpec

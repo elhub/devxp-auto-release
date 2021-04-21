@@ -1,4 +1,4 @@
-package no.elhub.tools.autorelease
+package no.elhub.tools.autorelease.project
 
 class VersionException : Exception {
 
