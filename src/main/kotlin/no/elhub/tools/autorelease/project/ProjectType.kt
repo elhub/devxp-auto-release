@@ -22,7 +22,7 @@ enum class ProjectType {
     MAVEN {
         override val versionRegex = """^\s*<version>.*</version>\s*""".toRegex()
         override val versionFormat = "<version>%s</version>"
-        override val publishCommand = "mvn publish"
+        override val publishCommand = "mvn deploy"
         override val configFilePath = "pom.xml"
     },
     NPM {
