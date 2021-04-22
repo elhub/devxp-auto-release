@@ -53,7 +53,16 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
         javaParameters = true
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn" // For createTempFile
+        freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn") // For createTempFile
+    }
+
+    // Set version for '--version' option of the application
+    doFirst("Set app version") {
+        val command = "find . -type f -name 'AutoRelease.kt' -exec sed -i 's/{{APP_VER}}/${project.version}/g' {} +;"
+
+        exec {
+            commandLine("sh", "-c", command)
+        }
     }
 }
 
@@ -110,10 +119,10 @@ val fatJar = task("fatJar", type = Jar::class) {
     from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
     with(tasks.jar.get() as CopySpec)
-    mustRunAfter(tasks.get("jar"))
+    mustRunAfter(tasks["jar"])
 }
 
-tasks.get("assemble").dependsOn(tasks.get("fatJar"))
+tasks["assemble"].dependsOn(tasks["fatJar"])
 
 publishing {
     publications {
@@ -142,6 +151,6 @@ artifactory {
     })
 }
 
-tasks.get("artifactoryPublish").dependsOn(tasks.get("assemble"))
+tasks["artifactoryPublish"].dependsOn(tasks["assemble"])
 
-tasks.get("publish").dependsOn(tasks.get("artifactoryPublish"))
+tasks["publish"].dependsOn(tasks["artifactoryPublish"])

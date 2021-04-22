@@ -14,13 +14,18 @@ import kotlin.system.exitProcess
     mixinStandardHelpOptions = true,
     description = ["auto-release ."],
     optionListHeading = "@|bold %nOptions|@:%n",
+    // This is a placeholder.
+    // The actual version will be set during the build.
+    // Do not modify!
+    version = ["{{APP_VER}}"],
     sortOptions = false
 )
 class AutoRelease : Callable<Int> {
 
     @CommandLine.Parameters(
         index = "0",
-        description = ["The file path to process (defaults to current location)"]
+        description = ["The file path to process (defaults to current location)"],
+        defaultValue = "."
     )
     private var path = "."
 
