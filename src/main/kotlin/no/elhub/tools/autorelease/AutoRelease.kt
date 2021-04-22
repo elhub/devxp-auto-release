@@ -1,10 +1,12 @@
 package no.elhub.tools.autorelease
 
+import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
 import no.elhub.tools.autorelease.project.VersionBump
 import no.elhub.tools.autorelease.project.VersionFile
 import no.elhub.tools.autorelease.project.VersionedRepository
 import picocli.CommandLine
+import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
@@ -39,21 +41,34 @@ class AutoRelease : Callable<Int> {
     )
     private var project: ProjectType = ProjectType.GENERIC
 
+    @Suppress("ArrayPrimitive")
+    @CommandLine.Option(
+        names = ["-v", "--verbose"],
+        description = [
+            "Enable verbose output.",
+            "Specify multiple -v options to increase verbosity.",
+            "For example, `-v -v`, or `-vv`"
+        ],
+        required = false
+    )
+    private var verboseMode: Array<Boolean> = emptyArray()
+
     override fun call(): Int {
-        println("Processing a project of type $project...")
+        val log = Logger(verboseMode)
+        log.info("Processing a project of type $project...")
         val repository = VersionedRepository(Paths.get(path).toFile())
-        println("Current version: ${repository.currentVersion}")
-        println("Unprocessed messages: ${repository.untaggedMessages.size}")
+        log.info("Current version: ${repository.currentVersion}")
+        log.info("Unprocessed messages: ${repository.untaggedMessages.size}")
         val currentVersion = repository.currentVersion
         val increaseVersion = VersionBump.analyze(repository.untaggedMessages)
-        println("Setting version...")
+        log.info("Setting version...")
         val nextVersion = currentVersion.increase(increaseVersion)
         val nextVersionString = if (nextVersion != currentVersion) {
             nextVersion
         } else { // Minor bump and add snapshot
             "${currentVersion.increase(VersionBump.MINOR)}-SNAPSHOT"
         }
-        println("Next version: $nextVersionString")
+        log.info("Next version: $nextVersionString")
         project.versionRegex?.let {
             VersionFile.setVersion(
                 Paths.get(project.configFilePath),
@@ -61,14 +76,22 @@ class AutoRelease : Callable<Int> {
                 String.format(project.versionFormat, nextVersionString)
             )
         }
-        if (nextVersion != currentVersion) {
+        return if (nextVersion != currentVersion) {
             repository.setTag("v$nextVersionString")
             if (project.publishCommand.isNotEmpty()) {
-                println("Publish release...")
-                Runtime.getRuntime().exec(project.publishCommand)
-            }
+                log.info("Publish release...")
+                val proc = Proc(File(path), Logger(verboseMode))
+                val cmd = proc.runCommand(project.publishCommand).also {
+                    it.waitFor()
+                    log.debug(it.inputStreamAsText())
+                    if (it.errorStreamAsText().isNotEmpty()) log.error(it.errorStreamAsText())
+                }
+                cmd.exitValue()
+            } else 0
+        } else {
+            log.debug("Nothing to do: nextVersion == currentVersion. Exiting...")
+            0
         }
-        return 0
     }
 }
 

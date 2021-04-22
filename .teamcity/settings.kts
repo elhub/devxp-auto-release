@@ -1,11 +1,5 @@
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildFeatures
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.DslContext
-import jetbrains.buildServer.configs.kotlin.v2019_2.Trigger
-import jetbrains.buildServer.configs.kotlin.v2019_2.VcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.SshAgent
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.gradle
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.project
 import jetbrains.buildServer.configs.kotlin.v2019_2.sequential
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.VcsTrigger
@@ -15,7 +9,6 @@ import no.elhub.common.build.configuration.Assemble
 import no.elhub.common.build.configuration.AutoRelease
 import no.elhub.common.build.configuration.CodeReview
 import no.elhub.common.build.configuration.ProjectType
-import no.elhub.common.build.configuration.ProjectType.GRADLE
 import no.elhub.common.build.configuration.SonarScan
 import no.elhub.common.build.configuration.UnitTest
 import no.elhub.common.build.configuration.constants.GlobalTokens
@@ -60,10 +53,10 @@ project {
             )
         )
 
-        val githubAuth = SshAgent({
+        val githubAuth = SshAgent {
             teamcitySshKey = "teamcity_github_rsa"
             param("secure:passphrase", GlobalTokens.githubSshPassphrase)
-        })
+        }
 
         buildType(
             AutoRelease(
