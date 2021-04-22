@@ -26,7 +26,7 @@ enum class ProjectType {
         override val configFilePath = "pom.xml"
     },
     NPM {
-        override val versionRegex = """^\s*"version"\s*:\s*".*"\s*,""".toRegex()
+        override val versionRegex = """^\s*"version"\s*:\s*".*"\s*,?""".toRegex()
         override val versionFormat = "\"version\": \"%s\","
         override val publishCommand = "npm publish"
         override val configFilePath = "package.json"
