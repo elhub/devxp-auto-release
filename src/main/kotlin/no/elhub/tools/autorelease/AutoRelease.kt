@@ -96,4 +96,6 @@ class AutoRelease : Callable<Int> {
 }
 
 @Suppress("SpreadOperator")
-fun main(args: Array<String>): Unit = exitProcess(CommandLine(AutoRelease()).execute(*args))
+fun main(args: Array<String>): Unit = exitProcess(
+    CommandLine(AutoRelease()).setCaseInsensitiveEnumValuesAllowed(true).execute(*args)
+)
