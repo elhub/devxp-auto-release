@@ -55,15 +55,6 @@ tasks.withType<KotlinCompile> {
         javaParameters = true
         freeCompilerArgs = freeCompilerArgs.plus("-Xopt-in=kotlin.RequiresOptIn") // For createTempFile
     }
-
-    // Set version for '--version' option of the application
-    doFirst("Set app version") {
-        val command = "find . -type f -name 'AutoRelease.kt' -exec sed -i 's/{{APP_VER}}/${project.version}/g' {} +;"
-
-        exec {
-            commandLine("sh", "-c", command)
-        }
-    }
 }
 
 /*

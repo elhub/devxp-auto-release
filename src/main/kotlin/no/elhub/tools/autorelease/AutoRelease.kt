@@ -16,10 +16,7 @@ import kotlin.system.exitProcess
     mixinStandardHelpOptions = true,
     description = ["auto-release ."],
     optionListHeading = "@|bold %nOptions|@:%n",
-    // This is a placeholder.
-    // The actual version will be set during the build.
-    // Do not modify!
-    version = ["{{APP_VER}}"],
+    versionProvider = ManifestVersionProvider::class,
     sortOptions = false
 )
 class AutoRelease : Callable<Int> {
@@ -93,6 +90,15 @@ class AutoRelease : Callable<Int> {
             0
         }
     }
+}
+
+object ManifestVersionProvider : CommandLine.IVersionProvider {
+
+    @Throws(Exception::class)
+    override fun getVersion(): Array<String> {
+        return arrayOf(CommandLine::class.java.`package`.implementationVersion.toString())
+    }
+
 }
 
 @Suppress("SpreadOperator")
