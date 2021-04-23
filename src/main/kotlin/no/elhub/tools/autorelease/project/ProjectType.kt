@@ -1,5 +1,6 @@
 package no.elhub.tools.autorelease.project
 
+@Suppress("unused")
 enum class ProjectType {
     ANSIBLE {
         override val versionRegex: Regex? = null
@@ -16,13 +17,15 @@ enum class ProjectType {
     GRADLE {
         override val versionRegex = """^\s*version\s*=\s*.*""".toRegex()
         override val versionFormat = "version=%s"
-        override val publishCommand = "./gradlew publish"
+        // TODO make skipping tests configurable?
+        override val publishCommand = "./gradlew clean assemble publish -x test"
         override val configFilePath = "gradle.properties"
     },
     MAVEN {
         override val versionRegex = """^\s*<version>.*</version>\s*""".toRegex()
         override val versionFormat = "<version>%s</version>"
-        override val publishCommand = "mvn deploy"
+        // TODO make skipping tests configurable?
+        override val publishCommand = "mvn clean package deploy -DskipTests -DfailIfNoTests=false"
         override val configFilePath = "pom.xml"
     },
     NPM {
