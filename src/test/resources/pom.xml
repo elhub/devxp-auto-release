@@ -5,6 +5,30 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example.organization</groupId>
     <artifactId>my-application</artifactId>
+
+    <properties>
+        <dep-a.version>A</dep-a.version>
+        <dep-b.version>B</dep-b.version>
+        <dep-c.version>C</dep-c.version>
+    </properties>
+
     <version>0.1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>example-A</artifactId>
+            <version>${dep-a.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>example-B</artifactId>
+            <version>${dep-b.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>example-C</artifactId>
+            <version>${dep-c.version}</version>
+        </dependency>
+    </dependencies>
 </project>

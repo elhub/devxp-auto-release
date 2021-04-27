@@ -69,7 +69,7 @@ class AutoRelease : Callable<Int> {
         project.versionRegex?.let {
             VersionFile.setVersion(
                 Paths.get(project.configFilePath),
-                it,
+                project,
                 String.format(project.versionFormat, nextVersionString)
             )
         }

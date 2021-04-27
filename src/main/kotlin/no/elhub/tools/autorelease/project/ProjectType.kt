@@ -23,7 +23,7 @@ enum class ProjectType {
     },
     MAVEN {
         override val versionRegex = """^\s*<version>.*</version>\s*""".toRegex()
-        override val versionFormat = "<version>%s</version>"
+        override val versionFormat = "%s"
         // TODO make skipping tests configurable?
         override val publishCommand = "mvn clean package deploy -DskipTests -DfailIfNoTests=false"
         override val configFilePath = "pom.xml"

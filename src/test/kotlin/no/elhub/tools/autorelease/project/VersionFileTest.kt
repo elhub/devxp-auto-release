@@ -1,6 +1,7 @@
 package no.elhub.tools.autorelease.project
 
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.inspectors.forExactly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import java.nio.file.Files
@@ -16,7 +17,7 @@ class VersionFileTest : DescribeSpec({
 
         VersionFile.setVersion(
             Paths.get("build/resources/test/gradle.properties"),
-            project.versionRegex!!,
+            project,
             String.format(project.versionFormat, "1.2.3")
         )
 
@@ -33,16 +34,14 @@ class VersionFileTest : DescribeSpec({
 
         VersionFile.setVersion(
             Paths.get("build/resources/test/pom.xml"),
-            project.versionRegex!!,
+            project,
             String.format(project.versionFormat, "1.2.3")
         )
 
-        it("should be have its version set to 1.2.3") {
+        it("should have exactly one <version/> tag with the value set to 1.2.3") {
             val testFile = Paths.get("build/resources/test/pom.xml")
-            val lines = testFile.readLines()
-            lines shouldContain "<version>1.2.3</version>"
+            testFile.readLines().forExactly(1) { it.trim() shouldBe "<version>1.2.3</version>" }
         }
-
     }
 
     describe("A package.json file to which VersionFile has been applied") {
@@ -50,7 +49,7 @@ class VersionFileTest : DescribeSpec({
 
         VersionFile.setVersion(
             Paths.get("build/resources/test/package.json"),
-            project.versionRegex!!,
+            project,
             String.format(project.versionFormat, "1.2.3")
         )
 
