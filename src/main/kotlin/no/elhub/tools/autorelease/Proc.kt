@@ -9,10 +9,6 @@ fun Process.inputStreamAsText() = this.inputStream.bufferedReader().use { it.rea
 
 fun Process.inputStreamAsLines() = this.inputStream.bufferedReader().use { it.readLines().map { l -> l.trim() } }
 
-fun Process.errorStreamAsText() = this.errorStream.bufferedReader().use { it.readText().trim() }
-
-fun Process.errorStreamAsLines() = this.errorStream.bufferedReader().use { it.readLines().map { l -> l.trim() } }
-
 /**
  * Class for running native processes.
  *
@@ -45,6 +41,7 @@ class Proc(private val dir: File, private val log: Logger) {
             ProcessBuilder()
                 .command(*args)
                 .directory(dir)
+                .redirectErrorStream(true)
                 .start()
                 .also { log.info("Start command process with args [${args.joinToString(", ")}]") }
         ) { "Cannot start, process is null" }

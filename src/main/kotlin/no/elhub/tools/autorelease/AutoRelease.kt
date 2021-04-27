@@ -81,7 +81,6 @@ class AutoRelease : Callable<Int> {
                 val cmd = proc.runCommand(project.publishCommand).also {
                     it.waitFor()
                     log.debug(it.inputStreamAsText())
-                    if (it.errorStreamAsText().isNotEmpty()) log.error(it.errorStreamAsText())
                 }
                 cmd.exitValue()
             } else 0
