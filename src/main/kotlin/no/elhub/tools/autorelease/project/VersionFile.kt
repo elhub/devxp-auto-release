@@ -27,7 +27,6 @@ object VersionFile {
         when (projectType) {
             MAVEN -> {
                 val versionNode = getMavenProjectVersion(file)
-                println(versionNode.nodeValue)
                 versionNode.nodeValue = newVersion
                 val xformer: Transformer = TransformerFactory.newInstance().newTransformer()
                 xformer.transform(DOMSource(versionNode.ownerDocument), StreamResult(tempFile.toFile()))
@@ -49,5 +48,4 @@ object VersionFile {
             }
         }
     }
-
 }

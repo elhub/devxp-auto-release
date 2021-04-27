@@ -79,8 +79,7 @@ class AutoRelease : Callable<Int> {
                 log.info("Publish release...")
                 val proc = Proc(File(path), Logger(verboseMode))
                 val cmd = proc.runCommand(project.publishCommand).also {
-                    it.waitFor()
-                    log.debug(it.inputStreamAsText())
+                    log.info(it.inputStreamAsText())
                 }
                 cmd.exitValue()
             } else 0
