@@ -1,10 +1,9 @@
 package no.elhub.tools.autorelease.project
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.shouldBe
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldBeNull
-import kotlin.collections.listOf
+import io.kotest.matchers.shouldBe
 
 class VersionTest : DescribeSpec({
 

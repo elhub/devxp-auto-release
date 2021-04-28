@@ -1,10 +1,7 @@
 package no.elhub.tools.autorelease.project
 
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.match
-import no.elhub.tools.autorelease.project.ProjectType
 
 class ProjectTypeTest : DescribeSpec({
 

@@ -2,8 +2,6 @@ package no.elhub.tools.autorelease.project
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
-import no.elhub.tools.autorelease.project.Version
-import no.elhub.tools.autorelease.project.VersionedRepository
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.Git
 import java.io.File

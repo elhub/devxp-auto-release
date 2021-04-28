@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>my-application</artifactId>
+
+    <version>0.1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>com.example.organization</groupId>
+        <artifactId>my-application-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <dep-a.version>A</dep-a.version>
+        <dep-b.version>B</dep-b.version>
+        <dep-c.version>C</dep-c.version>
+    </properties>
+
+    <modules>
+        <module>moduleA</module>
+        <module>moduleB</module>
+        <module>moduleC</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>example-A</artifactId>
+            <version>${dep-a.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>example-B</artifactId>
+            <version>${dep-b.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>example-C</artifactId>
+            <version>${dep-c.version}</version>
+        </dependency>
+    </dependencies>
+</project>

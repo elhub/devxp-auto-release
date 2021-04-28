@@ -1,18 +1,20 @@
 package no.elhub.tools.autorelease.project
 
+import no.elhub.tools.autorelease.io.MavenPomReader.getProjectModules
+import no.elhub.tools.autorelease.io.MavenPomReader.getProjectParentVersion
+import no.elhub.tools.autorelease.io.MavenPomReader.getProjectVersion
+import no.elhub.tools.autorelease.io.MavenPomWriter
 import no.elhub.tools.autorelease.project.ProjectType.GRADLE
 import no.elhub.tools.autorelease.project.ProjectType.MAVEN
 import no.elhub.tools.autorelease.project.ProjectType.NPM
-import no.elhub.tools.autorelease.reader.XmlDocumentReader.getMavenProjectVersion
 import java.nio.file.Files
 import java.nio.file.Files.createTempFile
+import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
-import javax.xml.transform.Transformer
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.notExists
 import kotlin.io.path.readLines
 import kotlin.io.path.writeLines
 
@@ -25,14 +27,7 @@ object VersionFile {
     fun setVersion(file: Path, projectType: ProjectType, newVersion: String) {
         val tempFile = createTempFile(Paths.get("."), null, null)
         when (projectType) {
-            MAVEN -> {
-                val versionNode = getMavenProjectVersion(file)
-                versionNode.nodeValue = newVersion
-                val xformer: Transformer = TransformerFactory.newInstance().newTransformer()
-                xformer.transform(DOMSource(versionNode.ownerDocument), StreamResult(tempFile.toFile()))
-                Files.delete(file)
-                Files.move(tempFile, file)
-            }
+            MAVEN -> setMavenVersion(file, newVersion)
             GRADLE, NPM -> {
                 val lines = file.readLines().map { line ->
                     when (val versionPattern = projectType.versionRegex) {
@@ -45,6 +40,30 @@ object VersionFile {
                 Files.move(tempFile, file)
             }
             else -> { // noop
+            }
+        }
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    private fun setMavenVersion(file: Path, newVersion: String) {
+        with(MavenPomWriter) {
+            getProjectVersion(file).also {
+                it.nodeValue = newVersion
+                it.writeTo(file)
+            }
+
+            val moduleNodes = getProjectModules(file)
+            for (i in 0 until moduleNodes.length) {
+                val moduleName = moduleNodes.item(i).textContent
+                val modulePomFile = file.parent.resolve("$moduleName/pom.xml")
+                if (modulePomFile.isRegularFile(LinkOption.NOFOLLOW_LINKS)) {
+                    getProjectParentVersion(modulePomFile).also {
+                        it.nodeValue = newVersion
+                        it.writeTo(modulePomFile)
+                    }
+                } else throw NullPointerException(
+                    "Build file for '$moduleName' module does not exist at '$modulePomFile'"
+                )
             }
         }
     }

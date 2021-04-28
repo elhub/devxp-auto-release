@@ -8,7 +8,6 @@ import org.eclipse.jgit.lib.Repository
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import java.io.File
 import java.io.IOException
-import java.util.*
 
 const val SSH_FILE_PATH = "~/.ssh/id_rsa"
 

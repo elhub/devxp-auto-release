@@ -1,16 +1,27 @@
 package no.elhub.tools.autorelease.project
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.inspectors.forExactly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
-import java.nio.file.Files
+import no.elhub.tools.autorelease.extensions.delete
+import no.elhub.tools.autorelease.io.MavenPomReader.getProjectParentVersion
+import no.elhub.tools.autorelease.io.MavenPomReader.getProjectVersion
 import java.nio.file.Paths
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readLines
 
 @OptIn(ExperimentalPathApi::class)
 class VersionFileTest : DescribeSpec({
+
+    afterSpec {
+        // Clean up the test files
+        Paths.get("build/resources/test/gradle.properties").delete()
+        Paths.get("build/resources/test/pom.xml").delete()
+        Paths.get("build/resources/test/package.json").delete()
+//        Paths.get("build/resources/test/multi-module-maven").delete()
+    }
 
     describe("A gradle.properties file to which VersionFile has been applied") {
         val project = ProjectType.GRADLE
@@ -32,15 +43,50 @@ class VersionFileTest : DescribeSpec({
     describe("A pom.xml file to which VersionFile has been applied") {
         val project = ProjectType.MAVEN
 
-        VersionFile.setVersion(
-            Paths.get("build/resources/test/pom.xml"),
-            project,
-            String.format(project.versionFormat, "1.2.3")
-        )
+        context("a single-module project") {
+            VersionFile.setVersion(
+                Paths.get("build/resources/test/pom.xml"),
+                project,
+                String.format(project.versionFormat, "1.2.3")
+            )
 
-        it("should have exactly one <version/> tag with the value set to 1.2.3") {
-            val testFile = Paths.get("build/resources/test/pom.xml")
-            testFile.readLines().forExactly(1) { it.trim() shouldBe "<version>1.2.3</version>" }
+            it("should have exactly one <version/> tag with the value set to 1.2.3") {
+                val testFile = Paths.get("build/resources/test/pom.xml")
+                testFile.readLines().forExactly(1) { it.trim() shouldBe "<version>1.2.3</version>" }
+            }
+        }
+
+        context("a multi-module project") {
+            VersionFile.setVersion(
+                Paths.get("build/resources/test/multi-module-maven/pom.xml"),
+                project,
+                String.format(project.versionFormat, "1.2.3")
+            )
+
+            it("parent pom should have exactly one <version/> tag with the value set to 1.2.3") {
+                val testFile = Paths.get("build/resources/test/multi-module-maven/pom.xml")
+                testFile.readLines().forExactly(1) { it.trim() shouldBe "<version>1.2.3</version>" }
+            }
+
+            it("a <parent/> tag in the parent pom should not be affected") {
+                val testFile = Paths.get("build/resources/test/multi-module-maven/pom.xml")
+                getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+            }
+
+            listOf("moduleA", "moduleB", "moduleC").forEach {
+                it("$it pom should have exactly one <version/> under <parent/> tag with the value set to 1.2.3") {
+                    val testFile = Paths.get("build/resources/test/multi-module-maven/$it/pom.xml")
+                    getProjectParentVersion(testFile).textContent shouldBe "1.2.3"
+                }
+            }
+
+            it("unregistered module's pom.xml should not be affected") {
+                val testFile = Paths.get("build/resources/test/multi-module-maven/not-a-module/pom.xml")
+                assertSoftly {
+                    getProjectVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+                    getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+                }
+            }
         }
     }
 
@@ -58,12 +104,5 @@ class VersionFileTest : DescribeSpec({
             val lines = testFile.readLines()
             lines.any { it.contains("\"version\": \"1.2.3\"") } shouldBe true
         }
-    }
-
-    afterSpec {
-        // Clean up the test files
-        Files.delete(Paths.get("build/resources/test/gradle.properties"))
-        Files.delete(Paths.get("build/resources/test/pom.xml"))
-        Files.delete(Paths.get("build/resources/test/package.json"))
     }
 })
