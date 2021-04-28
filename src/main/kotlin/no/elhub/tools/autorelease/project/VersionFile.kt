@@ -14,7 +14,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.isRegularFile
-import kotlin.io.path.notExists
 import kotlin.io.path.readLines
 import kotlin.io.path.writeLines
 
@@ -55,7 +54,7 @@ object VersionFile {
             val moduleNodes = getProjectModules(file)
             for (i in 0 until moduleNodes.length) {
                 val moduleName = moduleNodes.item(i).textContent
-                val modulePomFile = file.parent.resolve("$moduleName/pom.xml")
+                val modulePomFile = Paths.get(file.toFile().absolutePath).parent.resolve("$moduleName/pom.xml")
                 if (modulePomFile.isRegularFile(LinkOption.NOFOLLOW_LINKS)) {
                     getProjectParentVersion(modulePomFile).also {
                         it.nodeValue = newVersion

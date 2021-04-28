@@ -20,7 +20,7 @@ class VersionFileTest : DescribeSpec({
         Paths.get("build/resources/test/gradle.properties").delete()
         Paths.get("build/resources/test/pom.xml").delete()
         Paths.get("build/resources/test/package.json").delete()
-//        Paths.get("build/resources/test/multi-module-maven").delete()
+        Paths.get("build/resources/test/multi-module-maven").delete()
     }
 
     describe("A gradle.properties file to which VersionFile has been applied") {
