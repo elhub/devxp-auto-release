@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <common-build-configuration.version>0.10.5</common-build-configuration.version>
+        <common-build-configuration.version>0.10.10</common-build-configuration.version>
     </properties>
 
     <repositories>

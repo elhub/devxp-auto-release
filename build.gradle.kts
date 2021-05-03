@@ -14,7 +14,7 @@ plugins {
 }
 
 val teamcityVersion = "2020.2.2"
-val allureVersion = "2.13.8"
+val allureVersion = "2.13.9"
 val kotestVersion = "4.4.1"
 val mockkVersion = "1.10.6"
 val jgitVersion = "5.11.0.202103091610-r"
@@ -87,7 +87,7 @@ testlogger {
 allure {
     version = allureVersion
     autoconfigure = false
-    aspectjweaver = true
+    aspectjweaver = false
     useJUnit5 {
         version = allureVersion
     }
