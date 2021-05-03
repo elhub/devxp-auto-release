@@ -24,10 +24,10 @@ object VersionFile {
      */
     @OptIn(ExperimentalPathApi::class)
     fun setVersion(file: Path, projectType: ProjectType, newVersion: String) {
-        val tempFile = createTempFile(Paths.get("."), null, null)
         when (projectType) {
             MAVEN -> setMavenVersion(file, newVersion)
             GRADLE, NPM -> {
+                val tempFile = createTempFile(Paths.get("."), null, null)
                 val lines = file.readLines().map { line ->
                     when (val versionPattern = projectType.versionRegex) {
                         null -> line
