@@ -10,6 +10,7 @@ import picocli.CommandLine
 import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.Callable
+import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 @CommandLine.Command(
@@ -81,6 +82,7 @@ class AutoRelease : Callable<Int> {
                 log.info("Publish release...")
                 val proc = Proc(File(path), Logger(verboseMode))
                 val cmd = proc.runCommand(project.publishCommand).also {
+                    it.waitFor(180, TimeUnit.SECONDS)
                     log.info(it.inputStreamAsText())
                 }
                 cmd.exitValue()
