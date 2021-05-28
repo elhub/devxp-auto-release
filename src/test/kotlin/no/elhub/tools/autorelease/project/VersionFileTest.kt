@@ -17,10 +17,27 @@ class VersionFileTest : DescribeSpec({
 
     afterSpec {
         // Clean up the test files
+        Paths.get("build/resources/test/galaxy.yml").delete()
         Paths.get("build/resources/test/gradle.properties").delete()
         Paths.get("build/resources/test/pom.xml").delete()
         Paths.get("build/resources/test/package.json").delete()
         Paths.get("build/resources/test/multi-module-maven").delete()
+    }
+
+    describe("A galaxy.yml file to which VersionFile has been applied") {
+        val project = ProjectType.ANSIBLE
+
+        VersionFile.setVersion(
+            Paths.get("build/resources/test/galaxy.yml"),
+            project,
+            String.format(project.versionFormat, "1.2.3")
+        )
+
+        it("should have its version set to 1.2.3") {
+            val testFile = Paths.get("build/resources/test/galaxy.yml")
+            val lines = testFile.readLines()
+            lines shouldContain "version: 1.2.3"
+        }
     }
 
     describe("A gradle.properties file to which VersionFile has been applied") {

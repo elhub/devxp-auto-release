@@ -2,6 +2,7 @@ package no.elhub.tools.autorelease.project
 
 import no.elhub.tools.autorelease.config.Configuration
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.api.ResetCommand
 import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Ref
 import org.eclipse.jgit.lib.Repository
@@ -79,4 +80,19 @@ class VersionedRepository(workingDirectory: File) {
         }
     }
 
+    fun commit(file: String, msg: String) {
+        Git(repository).use { git ->
+            git.reset() // unstage changes if any
+                .setRef("HEAD")
+                .setMode(ResetCommand.ResetType.MIXED)
+                .call()
+
+            git.add().addFilepattern(file).call()
+
+            git.commit()
+                .setMessage(msg) // QUESTION should we have a default msg for commits?
+                .setAuthor("auto-release", "auto-release@elhub.cloud") // TODO make author details configurable
+                .call()
+        }
+    }
 }

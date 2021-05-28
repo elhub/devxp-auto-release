@@ -147,6 +147,18 @@ Then the following updates will happen:
 - the `<version/>` tag in the `project-root` pom.xml will be updated with the next version
 - the `<version/>` tag under the `<parent/>` in each module's pom.xml will be updated with the next version.
 
+### Ansible
+
+Currently, we only support updating the version in the `galaxy.yml` file in the project's root directory, so in a way releasing is supported only for ansible collections.
+
+The project should contain a `galaxy.yml` file, storing the project version in the form:
+
+```yml
+version: X.Y.Z
+```
+
+*Note that the changes made to the `galaxy.yml` file will be committed automatically.*
+
 ## Testing
 
 The full suite of tests can be run using:

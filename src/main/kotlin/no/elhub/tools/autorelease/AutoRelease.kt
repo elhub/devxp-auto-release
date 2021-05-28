@@ -2,6 +2,7 @@ package no.elhub.tools.autorelease
 
 import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
+import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
 import no.elhub.tools.autorelease.project.VersionBump
 import no.elhub.tools.autorelease.project.VersionFile
 import no.elhub.tools.autorelease.project.VersionedRepository
@@ -74,6 +75,7 @@ class AutoRelease : Callable<Int> {
             )
         }
         return if (nextVersion != currentVersion) {
+            if (project == ANSIBLE) repository.commit(project.configFilePath, "Release v$nextVersionString")
             repository.setTag("v$nextVersionString")
             if (project.publishCommand.isNotEmpty()) {
                 log.info("Publish release...")

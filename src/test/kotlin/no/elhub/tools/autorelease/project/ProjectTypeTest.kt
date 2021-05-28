@@ -5,6 +5,34 @@ import io.kotest.matchers.shouldBe
 
 class ProjectTypeTest : DescribeSpec({
 
+    describe("The ansible version pattern") {
+        val project = ProjectType.ANSIBLE
+
+        it("should match a standard version") {
+            project.versionRegex?.matches("version: 1.2.3") shouldBe true
+        }
+
+        it("should match a snapshot version") {
+            project.versionRegex?.matches("version: 0.1.0-SNAPSHOT") shouldBe true
+        }
+
+        it("should handle no-spaces in the version") {
+            project.versionRegex?.matches("version:1.2.3") shouldBe false
+        }
+
+        it("should handle spaces in the version") {
+            project.versionRegex?.matches("version : 1.2.3") shouldBe false
+        }
+
+        it("should handle spaces before the version") {
+            project.versionRegex?.matches("    version: 1.2.3") shouldBe false
+        }
+
+        it("should handle spaces after the version") {
+            project.versionRegex?.matches("version: 1.2.3   ") shouldBe true
+        }
+    }
+
     describe("The gradle version pattern") {
         val project = ProjectType.GRADLE
 

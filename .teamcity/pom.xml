@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <common-build-configuration.version>0.10.10</common-build-configuration.version>
+        <c-b-c.version>0.12.3</c-b-c.version>
     </properties>
 
     <repositories>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>no.elhub.common</groupId>
             <artifactId>common-build-configuration</artifactId>
-            <version>${common-build-configuration.version}</version>
+            <version>${c-b-c.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
