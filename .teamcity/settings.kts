@@ -18,6 +18,8 @@ version = "2020.2"
 project {
 
     val projectId = "no.elhub.tools:dev-tools-auto-release"
+    val projectType = ProjectType.GRADLE
+    val artifactoryRepository = "elhub-bin-release-local"
 
     params {
         param("teamcity.ui.settings.readOnly", "true")
@@ -29,7 +31,7 @@ project {
             UnitTest(
                 UnitTest.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    type = ProjectType.GRADLE
+                    type = projectType
                 )
             )
         )
@@ -38,7 +40,7 @@ project {
             SonarScan(
                 SonarScan.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    type = ProjectType.GRADLE,
+                    type = projectType,
                     sonarId = projectId
                 )
             )
@@ -48,7 +50,7 @@ project {
             Assemble(
                 Assemble.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    type = ProjectType.GRADLE
+                    type = projectType
                 )
             )
         )
@@ -62,7 +64,8 @@ project {
             AutoRelease(
                 AutoRelease.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    type = ProjectType.GRADLE,
+                    type = projectType,
+                    repository = artifactoryRepository,
                     sshAgent = githubAuth
                 )
             ) {
@@ -83,7 +86,7 @@ project {
         CodeReview(
             CodeReview.Config(
                 vcsRoot = DslContext.settingsRoot,
-                type = ProjectType.GRADLE,
+                type = projectType,
                 sonarId = projectId
             )
         )
