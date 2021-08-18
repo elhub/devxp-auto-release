@@ -40,6 +40,14 @@ class AutoRelease : Callable<Int> {
     )
     private var project: ProjectType = ProjectType.GENERIC
 
+    @CommandLine.Option(
+        names = ["-e", "--extra-param"],
+        description = [
+            "Extra parameter for the gradle/maven/npm publish task."
+        ]
+    )
+    private var extraParams: Array<String> = arrayOf()
+
     @Suppress("ArrayPrimitive")
     @CommandLine.Option(
         names = ["-v", "--verbose"],
@@ -81,7 +89,7 @@ class AutoRelease : Callable<Int> {
             if (project.publishCommand.isNotEmpty()) {
                 log.info("Publish release...")
                 val proc = Proc(File(path), Logger(verboseMode))
-                val cmd = proc.runCommand(project.publishCommand).also {
+                val cmd = proc.runCommand("${project.publishCommand} ${extraParams.joinToString(" ")}".trim()).also {
                     it.waitFor(180, TimeUnit.SECONDS)
                     log.info(it.inputStreamAsText())
                 }
