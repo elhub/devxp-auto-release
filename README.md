@@ -1,13 +1,14 @@
 # auto-release
 
-<!-- PROJECT SHIELDS -->
-![TeamCity Build](https://teamcity.elhub.cloud/app/rest/builds/buildType:(id:Tools_DevToolsAutoRelease_AutoRelease)/statusIcon)
-[![Quality Gate Status](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=alert_status)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
-[![Lines of Code](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=ncloc)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
+[<img src="https://img.shields.io/badge/repo-github-blue" alt="">](https://github.com/elhub/devxp-auto-release)
+[<img src="https://img.shields.io/badge/issues-jira-orange" alt="">](https://jira.elhub.cloud/issues/?jql=project%20%3D%20%22Team%20Dev%22%20AND%20component%20%3D%20devxp-auto-release%20AND%20status%20!%3D%20Done)
+[<img src="https://teamcity.elhub.cloud/app/rest/builds/buildType:(id:DevXp_DevXpAutoRelease_PublishDocs)/statusIcon" alt="">](https://teamcity.elhub.cloud/project/DevXp_DevXpAutoRelease?mode=builds#all-projects)
+[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=alert_status" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
+[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=ncloc" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
+[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=bugs" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
+[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=vulnerabilities" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
+[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=coverage" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
 
-[![Vulnerabilities](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=vulnerabilities)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
-[![Bugs](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=bugs)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
-[![Code Smells](https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.tools%3Adev-tools-auto-release&metric=code_smells)](https://sonar.elhub.cloud/dashboard?id=no.elhub.tools%3Adev-tools-auto-release)
 
 ## Table of Contents
 
@@ -169,18 +170,18 @@ The full suite of tests can be run using:
 
 ## Roadmap
 
-See the [open issues](https://github.com/elhub/dev-tools-auto-release/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/elhub/devxp-auto-release/issues) for a list of proposed features (and known issues).
 
 ## Contributing
 
 Contributing, issues and feature requests are welcome. See the
-[Contributing](https://github.com/elhub/dev-tools-auto-release/blob/main/CONTRIBUTING.md) file.
+[Contributing](https://github.com/elhub/devxp-auto-release/blob/main/CONTRIBUTING.md) file.
 
 ## Owners
 
 This project is developed by [Elhub](https://github.com/elhub). For the specific development group responsible for this
-code, see the [Codeowners](https://github.com/elhub/dev-tools-auto-release/blob/main/CODEOWNERS) file.
+code, see the [Codeowners](https://github.com/elhub/devxp-auto-release/blob/main/CODEOWNERS) file.
 
 ## License
 
-This project is [MIT](https://github.com/elhub/dev-tools-auto-release/blob/main/LICENSE.md) licensed.
+This project is [MIT](https://github.com/elhub/devxp-auto-release/blob/main/LICENSE.md) licensed.

@@ -4,12 +4,12 @@ name: commons
 version: 0.0.0
 readme: README.md
 authors:
-  - "@elhub/devtools"
+  - "@elhub/devxo"
 description: Sample galaxy.yml file for unit testing auto-release application
 license:
   - MIT
 tags: []
 dependencies: {}
-repository: https://github.com/elhub/dev-tools-auto-release
-documentation: https://github.com/elhub/dev-tools-auto-release/blob/main/README.md
-issues: https://github.com/elhub/dev-tools-auto-release/issues
+repository: https://github.com/elhub/devxp-auto-release
+documentation: https://github.com/elhub/devxp-auto-release/blob/main/README.md
+issues: https://github.com/elhub/devxp-auto-release/issues

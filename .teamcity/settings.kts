@@ -17,7 +17,7 @@ version = "2020.2"
 
 project {
 
-    val projectId = "no.elhub.tools:dev-tools-auto-release"
+    val projectId = "no.elhub.devxp:devxp-auto-release"
     val projectType = ProjectType.GRADLE
     val artifactoryRepository = "elhub-bin-release-local"
 
@@ -67,6 +67,16 @@ project {
                     type = projectType,
                     repository = artifactoryRepository,
                     sshAgent = githubAuth
+                )
+            )
+        )
+
+        buildType(
+            PublishDocs(
+                PublishDocs.Config(
+                    vcsRoot = DslContext.settingsRoot,
+                    type = projectType,
+                    dest = "devxp/devxp-auto-release"
                 )
             ) {
                 triggers {
