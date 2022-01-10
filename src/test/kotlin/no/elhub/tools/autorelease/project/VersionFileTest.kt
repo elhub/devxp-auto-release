@@ -90,17 +90,26 @@ class VersionFileTest : DescribeSpec({
                 getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
             }
 
-            listOf("moduleA", "moduleB", "moduleC").forEach {
-                it("$it pom should have exactly one <version/> under <parent/> tag with the value set to 1.2.3") {
-                    val testFile = Paths.get("build/resources/test/multi-module-maven/$it/pom.xml")
+            listOf("moduleA", "moduleB", "moduleC").forEach { sub ->
+                it("$sub pom should have exactly one <version/> under <parent/> tag with the value set to 1.2.3") {
+                    val testFile = Paths.get("build/resources/test/multi-module-maven/$sub/pom.xml")
                     getProjectParentVersion(testFile).textContent shouldBe "1.2.3"
+                }
+
+                if (sub == "moduleA") {
+                    listOf("moduleAA", "moduleAB").forEach { subSub ->
+                        it("$subSub pom should have exactly one <version/> under <parent/> tag with the value set to 1.2.3") {
+                            val testFile = Paths.get("build/resources/test/multi-module-maven/$sub/$subSub/pom.xml")
+                            getProjectParentVersion(testFile).textContent shouldBe "1.2.3"
+                        }
+                    }
                 }
             }
 
             it("unregistered module's pom.xml should not be affected") {
                 val testFile = Paths.get("build/resources/test/multi-module-maven/not-a-module/pom.xml")
                 assertSoftly {
-                    getProjectVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+                    getProjectVersion(testFile)?.textContent shouldBe "0.1.0-SNAPSHOT"
                     getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
                 }
             }

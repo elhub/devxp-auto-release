@@ -12,7 +12,7 @@ class MavenPomReaderTest : DescribeSpec({
             val testFile = Paths.get("build/resources/test/pom.xml")
 
             it("should get the xml node with the project version") {
-                MavenPomReader.getProjectVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+                MavenPomReader.getProjectVersion(testFile)?.textContent shouldBe "0.1.0-SNAPSHOT"
             }
         }
 
@@ -20,7 +20,7 @@ class MavenPomReaderTest : DescribeSpec({
             val testFile = Paths.get("build/resources/test/multi-module-maven/pom.xml")
 
             it("should get the xml node with the project version") {
-                MavenPomReader.getProjectVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+                MavenPomReader.getProjectVersion(testFile)?.textContent shouldBe "0.1.0-SNAPSHOT"
             }
 
             it("should get the number of nodes of the project modules") {
@@ -34,9 +34,11 @@ class MavenPomReaderTest : DescribeSpec({
 
         context("child build file of a multi-module maven project") {
             val testFile = Paths.get("build/resources/test/multi-module-maven/moduleA/pom.xml")
+            val otherTestFile = Paths.get("build/resources/test/multi-module-maven/moduleA/moduleAA/pom.xml")
 
             it("should get the version of the parent pom") {
                 MavenPomReader.getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
+                MavenPomReader.getProjectParentVersion(otherTestFile).textContent shouldBe "0.1.0-SNAPSHOT"
             }
         }
     }

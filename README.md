@@ -118,11 +118,11 @@ And the following directory structure:
 ```
 .
 ├── moduleA
-│   └── pom.xml <--- Module A POM
+│   └── pom.xml <--- moduleA POM
 ├── moduleB
-│   └── pom.xml <--- Module B POM
+│   └── pom.xml <--- moduleB POM
 ├── moduleC
-│   └── pom.xml <--- Module C POM
+│   └── pom.xml <--- moduleC POM
 └── pom.xml     <--- project-root
 ```
 
@@ -147,6 +147,26 @@ Then the following updates will happen:
 
 - the `<version/>` tag in the `project-root` pom.xml will be updated with the next version
 - the `<version/>` tag under the `<parent/>` in each module's pom.xml will be updated with the next version.
+
+Sub-sub(-sub)*? modules are also supported so long as they follow the same rules:
+
+- the sub-module A has `<modules>` tag in the pom.xml with a list of it's sub-modules
+- the sub-sub-modules AA and AB declare their parent `moduleA` in their pom.xml and use the same version as the parent
+
+```
+.
+├── moduleA
+│   ├── moduleAA
+│   │   └── pom.xml <--- moduleAA POM
+│   ├── moduleAB
+│   │   └── pom.xml <--- moduleAB POM
+│   └── pom.xml <--- moduleA POM
+├── moduleB
+│   └── pom.xml <--- moduleB POM
+├── moduleC
+│   └── pom.xml <--- moduleC POM
+└── pom.xml     <--- project-root
+```
 
 ### Ansible
 

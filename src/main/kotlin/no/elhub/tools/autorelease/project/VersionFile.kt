@@ -47,7 +47,7 @@ object VersionFile {
     @OptIn(ExperimentalPathApi::class)
     private fun setMavenVersion(file: Path, newVersion: String) {
         with(MavenPomWriter) {
-            getProjectVersion(file).also {
+            getProjectVersion(file)?.let {
                 it.nodeValue = newVersion
                 it.writeTo(file)
             }
@@ -61,6 +61,7 @@ object VersionFile {
                         it.nodeValue = newVersion
                         it.writeTo(modulePomFile)
                     }
+                    setMavenVersion(modulePomFile, newVersion)
                 } else throw NullPointerException(
                     "Build file for '$moduleName' module does not exist at '$modulePomFile'"
                 )

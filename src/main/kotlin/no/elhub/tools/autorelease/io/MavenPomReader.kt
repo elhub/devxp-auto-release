@@ -65,9 +65,9 @@ object MavenPomReader {
      *
      * It is expected that the [file] is a valid maven `pom.xml` file.
      */
-    fun getProjectVersion(file: Path): Node {
+    fun getProjectVersion(file: Path): Node? {
         val xmlDocument = builder.parse(file.toFile())
         val expression = "/ns:project/ns:version/text()"
-        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node
+        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node?
     }
 }

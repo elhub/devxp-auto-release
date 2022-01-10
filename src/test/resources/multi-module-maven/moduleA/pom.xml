@@ -12,6 +12,11 @@
 
     <artifactId>my-application-module-A</artifactId>
 
+    <modules>
+        <module>moduleAA</module>
+        <module>moduleAB</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
