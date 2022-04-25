@@ -3,6 +3,7 @@ package no.elhub.tools.autorelease
 import io.github.serpro69.semverkt.release.Increment
 import io.github.serpro69.semverkt.release.SemverRelease
 import io.github.serpro69.semverkt.release.configuration.PropertiesConfiguration
+import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
@@ -98,13 +99,25 @@ class AutoRelease : Callable<Int> {
         log.info("Processing a project of type $project...")
         val props = Properties().also {
             it["git.repo.directory"] = Paths.get(path)
+            it["git.tag.prefix"] = Configuration.tagPrefix
+            // git message configuration
+            it["git.message.major"] = Configuration.majorPattern
+            it["git.message.minor"] = Configuration.minorPattern
+            it["git.message.patch"] = Configuration.patchPattern
+            it["git.message.preRelease"] = Configuration.prereleasePattern
+            // version configuration
+            it["version.initialVersion"] = Configuration.startingVersion
+            it["version.preReleaseId"] = Configuration.prereleaseSuffix
+            it["version.snapshotSuffix"] = Configuration.snapshotSuffix
         }
         val config = PropertiesConfiguration(props)
         with(SemverRelease(config)) {
             val latestVersion = currentVersion()
             log.info("Current version: $latestVersion")
             val increaseVersion = with(nextIncrement()) {
-                if (increment !in listOf(Increment.DEFAULT, Increment.NONE) && this != Increment.NONE) increment else this
+                if (increment !in listOf(Increment.DEFAULT, Increment.NONE) && this != Increment.NONE) {
+                    increment
+                } else this
             }
             log.info("Setting next $increaseVersion version...")
             val nextVersion = when (increaseVersion) {
