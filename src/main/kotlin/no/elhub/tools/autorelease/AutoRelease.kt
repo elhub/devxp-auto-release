@@ -115,8 +115,10 @@ class AutoRelease : Callable<Int> {
             val latestVersion = currentVersion()
             log.info("Current version: $latestVersion")
             val increaseVersion = with(nextIncrement()) {
-                if (increment !in listOf(Increment.DEFAULT, Increment.NONE) && this != Increment.NONE) {
-                    increment
+                log.debug("Next increment from option: $increment")
+                log.debug("Next increment from commit: $this")
+                if (increment !in listOf(Increment.DEFAULT, Increment.NONE)) {
+                    if (this == Increment.NONE) this else increment
                 } else this
             }
             log.info("Setting next $increaseVersion version...")
