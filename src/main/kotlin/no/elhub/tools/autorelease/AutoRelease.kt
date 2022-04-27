@@ -51,7 +51,8 @@ class AutoRelease : Callable<Int> {
             "Version component to bump",
             "Use one of: \${COMPLETION-CANDIDATES}.",
             "Default: \${DEFAULT-VALUE}."
-        ]
+        ],
+        required = false
     )
     private var increment: Increment = Increment.NONE
 
@@ -94,6 +95,24 @@ class AutoRelease : Callable<Int> {
     )
     private var dryRun: Boolean = false
 
+    @CommandLine.Option(
+        names = ["--promote-release"],
+        description = [
+            "Promote a pre-release version to a release",
+        ],
+        required = false,
+    )
+    private var promoteRelease: Boolean = false
+
+    @CommandLine.Option(
+        names = ["--pre-release"],
+        description = [
+            "Create a new pre-release version",
+        ],
+        required = false,
+    )
+    private var preRelease: Boolean = false
+
     override fun call(): Int {
         val log = Logger(verboseMode)
         log.info("Processing a project of type $project...")
@@ -114,15 +133,21 @@ class AutoRelease : Callable<Int> {
         with(SemverRelease(config)) {
             val latestVersion = currentVersion()
             log.info("Current version: $latestVersion")
-            val increaseVersion = with(nextIncrement()) {
-                log.debug("Next increment from option: $increment")
-                log.debug("Next increment from commit: $this")
+            val increaseVersion = if (promoteRelease) Increment.NONE else with(nextIncrement()) {
+                log.debug("Next increment from cli option: $increment")
+                log.debug("Next increment from git commit: $this")
                 if (increment !in listOf(Increment.DEFAULT, Increment.NONE)) {
                     if (this == Increment.NONE) this else increment
                 } else this
             }
-            log.info("Setting next $increaseVersion version...")
-            val nextVersion = when (increaseVersion) {
+            log.info("Calculated version increment: '$increaseVersion'")
+            val nextVersion = if (promoteRelease) {
+                log.info("Promote to release...")
+                promoteToRelease()
+            } else if (preRelease) {
+                log.info("Create pre-release...")
+                createPreRelease(increaseVersion)
+            } else when (increaseVersion) {
                 Increment.MAJOR, Increment.MINOR, Increment.PATCH -> release(increaseVersion)
                 Increment.PRE_RELEASE -> {
                     latestVersion?.preRelease?.let {

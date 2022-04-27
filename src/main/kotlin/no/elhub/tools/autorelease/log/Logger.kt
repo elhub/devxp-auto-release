@@ -38,7 +38,7 @@ class Logger(private val verbose: Array<Boolean>) {
      * These messages are always printed,
      * irrespective of whether `--verbose` option is used or not.
      */
-    fun always(msg: String) {
+    fun always(msg: Any?) {
         println("${Color.PURPLE}[${LocalDateTime.now()}]: $msg${Color.NONE}")
     }
 
@@ -46,7 +46,7 @@ class Logger(private val verbose: Array<Boolean>) {
      * Prints DEBUG [msg] to stdout. Debug messages are logged if verbosity level >= 3
      */
     @Suppress("MagicNumber")
-    fun debug(msg: String) {
+    fun debug(msg: Any?) {
         if (verbose.size >= 3) {
             println("${Color.WHITE}[DEBUG] [${LocalDateTime.now()}]: $msg${Color.NONE}")
         }
@@ -55,7 +55,7 @@ class Logger(private val verbose: Array<Boolean>) {
     /**
      * Prints INFO [msg] to stdout. Informational messages are logged if verbosity level >= 2
      */
-    fun info(msg: String) {
+    fun info(msg: Any?) {
         if (verbose.size >= 2) {
             println("${Color.BLUE}[INFO] [${LocalDateTime.now()}]: $msg${Color.NONE}")
         }
@@ -64,7 +64,7 @@ class Logger(private val verbose: Array<Boolean>) {
     /**
      * Prints WARN [msg] to stdout. Warnings are logged if verbosity level >= 1
      */
-    fun warn(msg: String) {
+    fun warn(msg: Any?) {
         if (verbose.isNotEmpty()) {
             println("${Color.YELLOW}[WARN] [${LocalDateTime.now()}]: $msg${Color.NONE}")
         }
@@ -73,7 +73,7 @@ class Logger(private val verbose: Array<Boolean>) {
     /**
      * Prints an ERROR [msg]. Errors are always logged.
      */
-    fun error(msg: String) {
+    fun error(msg: Any?) {
         println("${Color.RED}[ERROR] [${LocalDateTime.now()}]: $msg${Color.NONE}")
     }
 
