@@ -7,6 +7,7 @@ import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
+import no.elhub.tools.autorelease.project.ProjectType.MAVEN
 import no.elhub.tools.autorelease.project.VersionFile
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
@@ -172,11 +173,18 @@ class AutoRelease : Callable<Int> {
                 if (publish && project.publishCommand.isNotEmpty()) {
                     log.info("Publish release...")
                     val proc = Proc(File(path), Logger(verboseMode))
-                    val cmd =
-                        proc.runCommand("${project.publishCommand} ${extraParams.joinToString(" ")}".trim()).also {
-                            it.waitFor(180, TimeUnit.SECONDS)
-                            log.info(it.inputStreamAsText())
+                    val publishCommand = "${project.publishCommand} ${extraParams.joinToString(" ")}"
+                        .trim()
+                        .let { cmd ->
+                            when (project) {
+                                MAVEN -> System.getenv()["MAVEN_SETTINGS_PATH"]?.let { "$cmd --settings '$it'" } ?: cmd
+                                else -> cmd
+                            }
                         }
+                    val cmd = proc.runCommand(publishCommand).also {
+                        it.waitFor(180, TimeUnit.SECONDS)
+                        log.info(it.inputStreamAsText())
+                    }
                     cmd.exitValue()
                 } else 0
             } else {
