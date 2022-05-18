@@ -39,7 +39,18 @@ object MavenPomReader {
     }
 
     /**
-     * Looks up the `<module/>` under the `<module/>` node in the xml [file] and returns as an instance of [NodeList].
+     * Looks up the `<project/>` node in the xml [file] and returns as an instance of [Node].
+     *
+     * It is expected that the [file] is a valid maven `pom.xml` file.
+     */
+    fun getProject(file: Path): Node {
+        val xmlDocument = builder.parse(file.toFile())
+        val expression = "/ns:project"
+        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node
+    }
+
+    /**
+     * Looks up the `<module/>` under the `<modules/>` node in the xml [file] and returns as an instance of [NodeList].
      *
      * It is expected that the [file] is a valid maven `pom.xml` file.
      */
@@ -68,6 +79,17 @@ object MavenPomReader {
     fun getProjectVersion(file: Path): Node? {
         val xmlDocument = builder.parse(file.toFile())
         val expression = "/ns:project/ns:version/text()"
+        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node?
+    }
+
+    /**
+     * Looks up the `<distributionManagement/>` node in the xml [file] and returns as an instance of [Node].
+     *
+     * It is expected that the [file] is a valid maven `pom.xml` file.
+     */
+    fun getProjectDistributionManagement(file: Path): Node? {
+        val xmlDocument = builder.parse(file.toFile())
+        val expression = "/ns:project/ns:distributionManagement"
         return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node?
     }
 }
