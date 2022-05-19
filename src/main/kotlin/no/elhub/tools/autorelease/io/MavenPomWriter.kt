@@ -1,5 +1,10 @@
 package no.elhub.tools.autorelease.io
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.w3c.dom.Document
 import org.w3c.dom.DocumentType
 import org.w3c.dom.Node
@@ -36,20 +41,19 @@ object MavenPomWriter {
      * @return this receiver node
      * @throws IllegalArgumentException if the receiver is not a `project` node.
      */
-    fun Node.appendDistributionManagement(
-        repository: Repository,
-        snapshotRepository: Repository,
-    ): Node {
+    fun Node.appendDistributionManagement(distributionManagement: DistributionManagement): Node {
         return if (nodeName == "project") {
             val doc = ownerDocument
             val dm = doc.createElement("distributionManagement")
             appendChild(dm)
             val repo = doc.createElement("repository")
             dm.appendChild(repo)
-            repo.appendRepoElements(repository)
-            val snapshotRepo = doc.createElement("snapshotRepository")
-            dm.appendChild(snapshotRepo)
-            snapshotRepo.appendRepoElements(snapshotRepository)
+            repo.appendRepoElements(distributionManagement.repository)
+            distributionManagement.snapshotRepository?.let { snapshotRepository ->
+                val snapshotRepo = doc.createElement("snapshotRepository")
+                dm.appendChild(snapshotRepo)
+                snapshotRepo.appendRepoElements(snapshotRepository)
+            }
             this
         } else throw IllegalArgumentException("Node $nodeName is not a 'project' node.")
     }
@@ -73,10 +77,18 @@ private fun Node.appendRepoElements(repository: Repository) {
     layout.textContent = repository.layout
 }
 
+@Serializable
+data class DistributionManagement(
+    val repository: Repository,
+    val snapshotRepository: Repository? = null
+)
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
 data class Repository(
     val uniqueVersion: Boolean,
     val id: String,
     val name: String,
     val url: String,
-    val layout: String = "default"
+    @EncodeDefault val layout: String = "default"
 )

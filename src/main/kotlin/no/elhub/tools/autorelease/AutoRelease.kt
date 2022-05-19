@@ -3,7 +3,12 @@ package no.elhub.tools.autorelease
 import io.github.serpro69.semverkt.release.Increment
 import io.github.serpro69.semverkt.release.SemverRelease
 import io.github.serpro69.semverkt.release.configuration.PropertiesConfiguration
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import no.elhub.tools.autorelease.config.Configuration
+import no.elhub.tools.autorelease.io.DistributionManagement
 import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
@@ -12,6 +17,7 @@ import no.elhub.tools.autorelease.project.VersionFile
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
 import picocli.CommandLine
+import picocli.CommandLine.ArgGroup
 import java.io.File
 import java.nio.file.Paths
 import java.util.*
@@ -114,6 +120,14 @@ class AutoRelease : Callable<Int> {
     )
     private var preRelease: Boolean = false
 
+    @ArgGroup(
+        exclusive = true,
+        multiplicity = "0..1",
+        heading = "\nMaven distribution management configuration.\nSee README for additional information on the json structure.\n",
+    )
+    private var distributionManagement: DistributionManagementOption? = null
+
+    @OptIn(ExperimentalSerializationApi::class)
     override fun call(): Int {
         val log = Logger(verboseMode)
         log.info("Processing a project of type $project...")
@@ -160,6 +174,15 @@ class AutoRelease : Callable<Int> {
             log.info("Next version: $nextVersion")
             return if (!dryRun && nextVersion != latestVersion) {
                 project.versionRegex?.let {
+                    if (project == MAVEN) {
+                        distributionManagement?.let {
+                            log.info("Update distributionManagement configuration for maven project")
+                            val dm: DistributionManagement = it.distributionManagementFile
+                                ?.let { f -> Json.decodeFromStream(f.inputStream()) }
+                                ?: Json.decodeFromString(it.distributionManagementString!!)
+                            VersionFile.setMavenDistributionManagement(dm, Paths.get(project.configFilePath))
+                        }
+                    }
                     log.info("Set next version in ${project.configFilePath}...")
                     VersionFile.setVersion(
                         Paths.get(project.configFilePath),
@@ -216,6 +239,27 @@ class AutoRelease : Callable<Int> {
                 .call()
         }
     }
+}
+
+object DistributionManagementOption {
+
+    @CommandLine.Option(
+        names = ["--maven-dm-string"],
+        description = [
+            "A json string with maven distribution management configuration.",
+        ],
+        required = true
+    )
+    lateinit var distributionManagementString: String
+
+    @CommandLine.Option(
+        names = ["--maven-dm-file"],
+        description = [
+            "A json file with maven distribution management configuration.",
+        ],
+        required = true
+    )
+    var distributionManagementFile: File? = null
 }
 
 object ManifestVersionProvider : CommandLine.IVersionProvider {

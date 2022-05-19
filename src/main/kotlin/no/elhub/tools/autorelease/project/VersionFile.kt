@@ -1,9 +1,14 @@
 package no.elhub.tools.autorelease.project
 
+import no.elhub.tools.autorelease.io.DistributionManagement
+import no.elhub.tools.autorelease.io.MavenPomReader.getProject
+import no.elhub.tools.autorelease.io.MavenPomReader.getProjectDistributionManagement
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectModules
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectParentVersion
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectVersion
 import no.elhub.tools.autorelease.io.MavenPomWriter
+import no.elhub.tools.autorelease.io.MavenPomWriter.appendDistributionManagement
+import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
 import no.elhub.tools.autorelease.project.ProjectType.GRADLE
 import no.elhub.tools.autorelease.project.ProjectType.MAVEN
@@ -19,6 +24,20 @@ import kotlin.io.path.readLines
 import kotlin.io.path.writeLines
 
 object VersionFile {
+
+    /**
+     * Sets the [distributionManagement] configuration in the maven pom.xml [file].
+     *
+     * If the [file] already contains `distributionManagement` node, it will first be deleted,
+     * and then a new one appended with the new [distributionManagement] configuration values.
+     */
+    fun setMavenDistributionManagement(distributionManagement: DistributionManagement, file: Path) {
+        val parent = getProjectDistributionManagement(file)?.let {
+            it.parentNode.also { p -> p.removeChild(it) }
+        } ?: getProject(file)
+        parent.appendDistributionManagement(distributionManagement)
+        parent.writeTo(file)
+    }
 
     /**
      * Sets the [newVersion] in the [file] for a specified [projectType].

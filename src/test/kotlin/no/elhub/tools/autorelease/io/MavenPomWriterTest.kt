@@ -19,8 +19,10 @@ class MavenPomWriterTest : DescribeSpec({
         it("should append project distributionManagement configuration") {
             val project = MavenPomReader.getProject(testFile)
             project.appendDistributionManagement(
-                Repository(false, "releases", "release repo", "https://example.com/release"),
-                Repository(true, "snapshots", "snapshot repo", "https://example.com/snapshots"),
+                DistributionManagement(
+                    Repository(false, "releases", "release repo", "https://example.com/release"),
+                    Repository(true, "snapshots", "snapshot repo", "https://example.com/snapshots"),
+                )
             )
             val newPom = with(Paths.get("build/resources/test/new-pom-with-dm.xml")) {
                 deleteIfExists()

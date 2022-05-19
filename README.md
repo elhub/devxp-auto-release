@@ -168,6 +168,32 @@ Sub-sub(-sub)*? modules are also supported so long as they follow the same rules
 └── pom.xml     <--- project-root
 ```
 
+#### Distribution Management Configuration
+
+It is possible to override `distributionManagement` node in the `pom.xml` file with auto-release using `--maven-distribution-management` option and a json string with the following format:
+
+```json
+{
+  "repository": {
+    "uniqueVersion": true,
+    "id": "repo-id",
+    "name": "repo-name",
+    "url": "repo-url",
+    "layout": "repo-layout"
+  },
+  "snapshotRepository": {
+    "uniqueVersion": true,
+    "id": "repo-id",
+    "name": "repo-name",
+    "url": "repo-url",
+    "layout": "repo-layout"
+  }
+}
+```
+
+The `snapshotRepository` object is optional and can be omitted if not needed.
+The `layout` field is optional and will use `"default"` value if not specified otherwise.
+
 ### Ansible
 
 Currently, we only support updating the version in the `galaxy.yml` file in the project's root directory, so in a way releasing is supported only for ansible collections.
