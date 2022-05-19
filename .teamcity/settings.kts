@@ -32,7 +32,8 @@ project {
             UnitTest(
                 UnitTest.Config(
                     vcsRoot = DslContext.settingsRoot,
-                    type = projectType
+                    type = projectType,
+                    generateAllureReport = false,
                 )
             )
         )
@@ -98,7 +99,7 @@ project {
             CodeReview.Config(
                 vcsRoot = DslContext.settingsRoot,
                 type = projectType,
-                sonarId = projectId
+                sonarId = projectId,
             )
         )
     )
