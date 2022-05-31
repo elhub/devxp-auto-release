@@ -30,7 +30,7 @@ enum class ProjectType {
     },
     NPM {
         override val versionRegex = """^\s*"version"\s*:\s*".*"\s*,?""".toRegex()
-        override val versionFormat = "\"version\": \"%s\","
+        override val versionFormat = "%s"
         override val publishCommand = "npm run release"
         override val configFilePath = "package.json"
     };

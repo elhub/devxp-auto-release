@@ -20,7 +20,7 @@ class VersionFileTest : DescribeSpec({
         Paths.get("build/resources/test/galaxy.yml").delete()
         Paths.get("build/resources/test/gradle.properties").delete()
         Paths.get("build/resources/test/pom.xml").delete()
-        Paths.get("build/resources/test/package.json").delete()
+        Paths.get("build/resources/test/package-test-version.json").delete()
         Paths.get("build/resources/test/multi-module-maven").delete()
     }
 
@@ -120,15 +120,15 @@ class VersionFileTest : DescribeSpec({
         val project = ProjectType.NPM
 
         VersionFile.setVersion(
-            Paths.get("build/resources/test/package.json"),
+            Paths.get("build/resources/test/package-test-version.json"),
             project,
-            String.format(project.versionFormat, "1.2.3")
+            "1.2.3",
         )
 
         it("should be have its version set to 1.2.3") {
-            val testFile = Paths.get("build/resources/test/package.json")
+            val testFile = Paths.get("build/resources/test/package-test-version.json")
             val lines = testFile.readLines()
-            lines.any { it.contains("\"version\": \"1.2.3\"") } shouldBe true
+            lines.any { it.contains("\"version\":\"1.2.3\"") } shouldBe true
         }
     }
 })

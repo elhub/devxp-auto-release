@@ -9,6 +9,7 @@ import no.elhub.tools.autorelease.io.MavenPomReader.getProjectVersion
 import no.elhub.tools.autorelease.io.MavenPomWriter
 import no.elhub.tools.autorelease.io.MavenPomWriter.appendDistributionManagement
 import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
+import no.elhub.tools.autorelease.io.NpmPackageJsonWriter
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
 import no.elhub.tools.autorelease.project.ProjectType.GRADLE
 import no.elhub.tools.autorelease.project.ProjectType.MAVEN
@@ -45,8 +46,7 @@ object VersionFile {
     @OptIn(ExperimentalPathApi::class)
     fun setVersion(file: Path, projectType: ProjectType, newVersion: String) {
         when (projectType) {
-            MAVEN -> setMavenVersion(file, newVersion)
-            GRADLE, NPM, ANSIBLE -> {
+            ANSIBLE, GRADLE -> {
                 val tempFile = createTempFile(Paths.get("."), null, null)
                 val lines = file.readLines().map { line ->
                     when (val versionPattern = projectType.versionRegex) {
@@ -58,6 +58,8 @@ object VersionFile {
                 Files.delete(file)
                 Files.move(tempFile, file)
             }
+            MAVEN -> setMavenVersion(file, newVersion)
+            NPM -> NpmPackageJsonWriter.updateVersion(newVersion, file.toFile())
             else -> { // noop
             }
         }

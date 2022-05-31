@@ -9,10 +9,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.io.DistributionManagement
+import no.elhub.tools.autorelease.io.NpmPackageJsonWriter
 import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
 import no.elhub.tools.autorelease.project.ProjectType.MAVEN
+import no.elhub.tools.autorelease.project.ProjectType.NPM
 import no.elhub.tools.autorelease.project.VersionFile
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
@@ -120,6 +122,16 @@ class AutoRelease : Callable<Int> {
     )
     private var preRelease: Boolean = false
 
+    @CommandLine.Option(
+        names = ["--npm-publish-registry"],
+        description = [
+            "Repository for publishing npm artifacts.",
+            "Used with NPM project types",
+        ],
+        required = false
+    )
+    private var npmPublishRegistry: String? = null
+
     @ArgGroup(
         exclusive = true,
         multiplicity = "0..1",
@@ -174,13 +186,22 @@ class AutoRelease : Callable<Int> {
             log.info("Next version: $nextVersion")
             return if (!dryRun && nextVersion != latestVersion) {
                 project.versionRegex?.let {
-                    if (project == MAVEN) {
-                        distributionManagement?.let {
+                    when (project) {
+                        MAVEN -> distributionManagement?.let {
                             log.info("Update distributionManagement configuration for maven project")
                             val dm: DistributionManagement = it.distributionManagementFile
                                 ?.let { f -> Json.decodeFromStream(f.inputStream()) }
                                 ?: Json.decodeFromString(it.distributionManagementString!!)
                             VersionFile.setMavenDistributionManagement(dm, Paths.get(project.configFilePath))
+                        }
+                        NPM -> npmPublishRegistry?.let {
+                            log.info("Update publishConfig in package.json for npm project")
+                            NpmPackageJsonWriter.updatePublishConfig(
+                                mapOf("registry" to it),
+                                Paths.get(project.configFilePath).toFile()
+                            )
+                        }
+                        else -> { /*noop*/
                         }
                     }
                     log.info("Set next version in ${project.configFilePath}...")

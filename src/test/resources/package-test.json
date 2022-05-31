@@ -1,0 +1,61 @@
+{
+  "name": "unit-test-config",
+  "description": "package.json for unit tests of this application",
+  "version": "0.0.0",
+  "publishConfig": {
+    "registry": "https://jfrog.example/artifactory/foo/bar"
+  },
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@sencha/cmd": "7.2.84"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "csvtojson": "^0.4.2",
+    "eslint": "^7.25.0",
+    "gulp": "^3.9.0",
+    "gulp-jasmine-livereload-task": "^0.7.0",
+    "jasmine-core": "^2.3.4",
+    "jest": "^26.6.3",
+    "jest-circus": "^26.6.3",
+    "jest-playwright-preset": "^1.6.0",
+    "karma": "^2.0.4",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-html-reporter": "^0.2.7",
+    "karma-jasmine": "^1.1.2",
+    "karma-junit-reporter": "^1.2.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-sinon": "^1.0.5",
+    "lodash": "^3.10.1",
+    "parallelshell": "^3.0.2",
+    "phantomjs-prebuilt": "^2.1.7",
+    "playwright": "^1.11.1",
+    "rimraf": "^2.5.2",
+    "simple-path-router": "^1.1.0",
+    "simple-reverse-proxy": "^1.0.2",
+    "sinon": "^1.17.4",
+    "test-ui-commons": "^0.1.0",
+    "ts-jest": "^26.5.6",
+    "typescript": "^4.3.2"
+  },
+  "scripts": {
+    "clean": "rimraf build/",
+    "dev": "parallelshell 'npm run proxy:api' 'npm run sencha:watch'",
+    "eslint": "eslint app classic overrides tests",
+    "proxy:api": "node reverse-proxy.js",
+    "sencha:watch": "sencha app watch",
+    "test": "echo \"The tests are failing, but we don't care!\" && exit 0",
+    "upgrade": "sencha app upgrade",
+    "build": "sencha --quiet app build -c -e production",
+    "release": "node prepare-publish.js && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@code.example:0000/test-repo.git"
+  },
+  "author": "elhub/devxp",
+  "license": "MIT"
+}
