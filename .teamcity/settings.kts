@@ -33,7 +33,6 @@ project {
             generateAllureReport = false,
         )
     )
-    )
 
     val sonarScanConfig = SonarScan.Config(
         vcsRoot = DslContext.settingsRoot,
