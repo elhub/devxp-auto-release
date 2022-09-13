@@ -38,6 +38,7 @@ project {
         vcsRoot = DslContext.settingsRoot,
         type = projectType,
         sonarId = projectId,
+        additionalParams = listOf("-Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml")
     )
 
     val sonarScan = SonarScan(sonarScanConfig) {
