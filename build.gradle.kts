@@ -39,4 +39,3 @@ val shadowJar by tasks.getting(com.github.jengelman.gradle.plugins.shadow.tasks.
 }
 
 tasks["assemble"].dependsOn(tasks["shadowJar"])
-    implementation(platform("no.elhub.test:test-bom:34.1.0"))
