@@ -1,6 +1,5 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("application")
+    id("no.elhub.devxp.kotlin-application") version "0.0.1"
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
@@ -24,10 +23,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
-/*
- * Executable Jar File Assembly.
- */
- val applicationMainClass : String by project
+val applicationMainClass : String by project
 
 application {
     mainClass.set(applicationMainClass)
