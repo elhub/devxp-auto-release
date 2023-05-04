@@ -1,5 +1,6 @@
 {
     "phabricator.uri" : "https://phabricator.elhub.cloud",
     "unit.engine": "GradleUnitTestEngine",
+    "repository.callsign": "DEVXPAUTORELEASE",
     "arc.land.onto": ["main"]
 }

@@ -32,7 +32,7 @@ object MavenPomReader {
                 throw UnsupportedOperationException("This operation is not supported")
             }
 
-            override fun getPrefixes(namespaceURI: String?): MutableIterator<Any> {
+            override fun getPrefixes(namespaceURI: String?): MutableIterator<String> {
                 throw UnsupportedOperationException("This operation is not supported")
             }
         }

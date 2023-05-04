@@ -23,7 +23,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
-val applicationMainClass : String by project
+val applicationMainClass: String by project
 
 application {
     mainClass.set(applicationMainClass)
@@ -33,5 +33,10 @@ val shadowJar by tasks.getting(com.github.jengelman.gradle.plugins.shadow.tasks.
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
 }
+listOf(tasks["distZip"], tasks["distTar"]).forEach {
+    it.dependsOn(tasks["shadowJar"])
+}
+tasks["startScripts"].dependsOn(tasks["shadowJar"])
+tasks["startShadowScripts"].dependsOn(tasks["jar"])
 
 tasks["assemble"].dependsOn(tasks["shadowJar"])
