@@ -1,5 +1,5 @@
 plugins {
-    id("no.elhub.devxp.kotlin-application") version "0.0.1"
+    id("no.elhub.devxp.kotlin-application") version "0.1.0"
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."

@@ -1,5 +1,7 @@
 package no.elhub.tools.autorelease.project
 
+import java.util.Locale
+
 @Suppress("unused")
 enum class ProjectType {
     ANSIBLE {
@@ -17,6 +19,7 @@ enum class ProjectType {
     GRADLE {
         override val versionRegex = """^\s*version\s*=\s*.*""".toRegex()
         override val versionFormat = "version=%s"
+
         // TODO make skipping tests configurable?
         override val publishCommand = "./gradlew clean assemble publish -x test"
         override val configFilePath = "gradle.properties"
@@ -24,6 +27,7 @@ enum class ProjectType {
     MAVEN {
         override val versionRegex = """^\s*<version>.*</version>\s*""".toRegex()
         override val versionFormat = "%s"
+
         // TODO make skipping tests configurable?
         override val publishCommand = "mvn clean deploy -DskipTests -DfailIfNoTests=false"
         override val configFilePath = "pom.xml"
@@ -40,5 +44,5 @@ enum class ProjectType {
     abstract val publishCommand: String
     abstract val configFilePath: String
 
-    override fun toString() = this.name.toLowerCase()
+    override fun toString() = this.name.lowercase(Locale.getDefault())
 }
