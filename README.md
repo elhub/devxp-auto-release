@@ -86,7 +86,26 @@ A sample config file looks like:
   "majorPattern": "[major]",
   "minorPattern": "[minor]",
   "patchPattern": "[patch]",
-  "prereleasePattern": "[rc]"
+  "prereleasePattern": "[rc]",
+  "extraFields": {
+    "file": "pom.xml",
+    "fields": [
+      {
+        "name": "hello",
+        "value": "world",
+        "parent": {
+          "name": "properties"
+        }
+      },
+      {
+        "name": "foo",
+        "value": "bar",
+        "parent": {
+          "name": "properties"
+        }
+      }
+    ]
+  }
 }
 ```
 
@@ -216,6 +235,32 @@ It is possible to override `distributionManagement` node in the `pom.xml` file w
 
 The `snapshotRepository` object is optional and can be omitted if not needed.
 The `layout` field is optional and will use `"default"` value if not specified otherwise.
+
+##### Extra Fields
+
+It is possible to update additional fields in a pom.xml file via `extraFields` configuration parameter (currently only supported in json-based configuration).
+Having the following in the json config file:
+
+```json
+{
+  "extraFields": {
+    "file": "pom.xml",
+    "fields": [
+      {
+        "name": "foo",
+        "value": "bar",
+        "parent": {
+          "name": "properties"
+        }
+      }
+    ]
+  }
+}
+```
+
+Would look for a `/project/properties/foo` node in the `pom.xml` file in current working dir, and update its text content to "bar".
+
+The `value` field can be omitted, in which case it will be updated to the same value as the next version.
 
 #### Ansible
 

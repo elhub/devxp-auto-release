@@ -1,7 +1,5 @@
 package no.elhub.tools.autorelease.io
 
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import java.nio.file.Path
 import javax.xml.XMLConstants
 import javax.xml.namespace.NamespaceContext
@@ -9,8 +7,10 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import no.elhub.tools.autorelease.config.Field
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
 
-// TODO should do the same for json (NPM)
 /**
  * Provides functions for reading xml documents.
  */
@@ -47,6 +47,20 @@ object MavenPomReader {
         val xmlDocument = builder.parse(file.toFile())
         val expression = "/ns:project"
         return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node
+    }
+
+    /**
+     * Looks up the [field] under the `<project/>` node in the xml [file] and returns as an instance of [Node].
+     *
+     * It is expected that the [file] is a valid maven `pom.xml` file.
+     */
+    fun getField(file: Path, field: Field): Node? {
+        fun getExpression(field: Field): String = field.parent?.let { "${getExpression(it)}/ns:${field.name}" }
+            ?: "ns:${field.name}"
+
+        val xmlDocument = builder.parse(file.toFile())
+        val expression = "/ns:project/${getExpression(field)}"
+        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node?
     }
 
     /**

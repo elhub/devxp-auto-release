@@ -1,13 +1,5 @@
 package no.elhub.tools.autorelease.io
 
-import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import org.w3c.dom.Document
-import org.w3c.dom.DocumentType
-import org.w3c.dom.Node
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -15,6 +7,12 @@ import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import org.w3c.dom.Document
+import org.w3c.dom.DocumentType
+import org.w3c.dom.Node
 
 object MavenPomWriter {
     private val transformer = TransformerFactory.newInstance().newTransformer().also {

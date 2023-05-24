@@ -155,8 +155,8 @@ class AutoRelease : Callable<Int> {
     override fun call(): Int {
         val log = Logger(verboseMode)
         log.info("Processing a project of type $project...")
+        val config: Configuration = configPath?.let { path -> JsonConfiguration(path) } ?: DefaultConfiguration
         val props = Properties().also {
-            val config: Configuration = configPath?.let { path -> JsonConfiguration(path) } ?: DefaultConfiguration
             it["git.repo.directory"] = Paths.get(path)
             it["git.tag.prefix"] = config.tagPrefix
             // git message configuration
@@ -198,30 +198,30 @@ class AutoRelease : Callable<Int> {
             log.info("Next version: $nextVersion")
             return if (!dryRun && nextVersion != latestVersion) {
                 project.versionRegex?.let {
+                    val buildFile = Paths.get(project.configFilePath)
                     when (project) {
-                        MAVEN -> distributionManagement?.let {
-                            log.info("Update distributionManagement configuration for maven project")
-                            val dm: DistributionManagement = it.distributionManagementFile
-                                ?.let { f -> Json.decodeFromStream(f.inputStream()) }
-                                ?: Json.decodeFromString(it.distributionManagementString!!)
-                            VersionFile.setMavenDistributionManagement(dm, Paths.get(project.configFilePath))
+                        MAVEN -> {
+                            distributionManagement?.let {
+                                log.info("Update distributionManagement configuration for maven project")
+                                val dm: DistributionManagement = it.distributionManagementFile
+                                    ?.let { f -> Json.decodeFromStream(f.inputStream()) }
+                                    ?: Json.decodeFromString(it.distributionManagementString)
+                                VersionFile.setMavenDistributionManagement(dm, buildFile)
+                            }
                         }
                         NPM -> npmPublishRegistry?.let {
                             log.info("Update publishConfig in package.json for npm project")
                             NpmPackageJsonWriter.updatePublishConfig(
                                 mapOf("registry" to it),
-                                Paths.get(project.configFilePath).toFile()
+                                buildFile.toFile()
                             )
                         }
                         else -> { /*noop*/
                         }
                     }
                     log.info("Set next version in ${project.configFilePath}...")
-                    VersionFile.setVersion(
-                        Paths.get(project.configFilePath),
-                        project,
-                        String.format(project.versionFormat, nextVersion)
-                    )
+                    VersionFile.setVersion(buildFile, project, String.format(project.versionFormat, nextVersion))
+                    VersionFile.setExtraFields(project, config, nextVersion.toString())
                 }
                 val repo = Git.open(Paths.get(path).toFile())
                 if (project == ANSIBLE) repo.commit(project.configFilePath, "Release v$nextVersion")

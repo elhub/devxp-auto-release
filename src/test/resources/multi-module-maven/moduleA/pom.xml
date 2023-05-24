@@ -17,6 +17,12 @@
         <module>moduleAB</module>
     </modules>
 
+    <properties>
+        <test>
+            <foo>bar</foo>
+        </test>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>

@@ -10,6 +10,8 @@
         <dep-a.version>A</dep-a.version>
         <dep-b.version>B</dep-b.version>
         <dep-c.version>C</dep-c.version>
+        <test>foo</test>
+        <foo/>
     </properties>
 
     <version>0.1.0-SNAPSHOT</version>

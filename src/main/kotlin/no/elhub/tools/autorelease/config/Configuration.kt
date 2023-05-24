@@ -11,7 +11,21 @@ interface Configuration {
     val minorPattern: String
     val patchPattern: String
     val prereleasePattern: String
+    val extraFields: ExtraFields?
 }
+
+@Serializable
+data class ExtraFields(
+    val file: String,
+    val fields: List<Field>,
+)
+
+@Serializable
+data class Field(
+    val name: String,
+    val value: String? = null,
+    val parent: Field? = null,
+)
 
 @Serializable
 data class AutoReleaseConfig(
@@ -23,4 +37,5 @@ data class AutoReleaseConfig(
     val minorPattern: String? = null,
     val patchPattern: String? = null,
     val prereleasePattern: String? = null,
+    val extraFields: ExtraFields? = null,
 )

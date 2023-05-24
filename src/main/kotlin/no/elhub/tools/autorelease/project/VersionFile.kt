@@ -1,6 +1,17 @@
 package no.elhub.tools.autorelease.project
 
+import io.github.serpro69.semverkt.spec.Semver
+import java.nio.file.Files
+import java.nio.file.Files.createTempFile
+import java.nio.file.LinkOption
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.readLines
+import kotlin.io.path.writeLines
+import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.io.DistributionManagement
+import no.elhub.tools.autorelease.io.MavenPomReader.getField
 import no.elhub.tools.autorelease.io.MavenPomReader.getProject
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectDistributionManagement
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectModules
@@ -14,15 +25,6 @@ import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
 import no.elhub.tools.autorelease.project.ProjectType.GRADLE
 import no.elhub.tools.autorelease.project.ProjectType.MAVEN
 import no.elhub.tools.autorelease.project.ProjectType.NPM
-import java.nio.file.Files
-import java.nio.file.Files.createTempFile
-import java.nio.file.LinkOption
-import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.readLines
-import kotlin.io.path.writeLines
 
 object VersionFile {
 
@@ -43,7 +45,6 @@ object VersionFile {
     /**
      * Sets the [newVersion] in the [file] for a specified [projectType].
      */
-    @OptIn(ExperimentalPathApi::class)
     fun setVersion(file: Path, projectType: ProjectType, newVersion: String) {
         when (projectType) {
             ANSIBLE, GRADLE -> {
@@ -65,7 +66,22 @@ object VersionFile {
         }
     }
 
-    @OptIn(ExperimentalPathApi::class)
+    fun setExtraFields(projectType: ProjectType, config: Configuration, newVersion: String?) {
+        config.extraFields?.let { e ->
+            val file = Paths.get(e.file)
+            when (projectType) {
+                MAVEN -> e.fields.forEach { field ->
+                    getField(file, field)?.let {
+                        it.textContent = field.value ?: newVersion
+                        it.writeTo(file)
+                    }
+                }
+                else -> { // noop
+                }
+            }
+        }
+    }
+
     private fun setMavenVersion(file: Path, newVersion: String) {
         with(MavenPomWriter) {
             getProjectVersion(file)?.let {

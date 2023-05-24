@@ -25,6 +25,8 @@ class JsonConfiguration(configPath: Path = Path("./auto-release.json")) : Config
         private set
     override var prereleasePattern: String = DefaultConfiguration.prereleasePattern
         private set
+    override var extraFields: ExtraFields? = DefaultConfiguration.extraFields
+        private set
 
     init {
         val configStream = configPath.inputStream()
@@ -37,5 +39,6 @@ class JsonConfiguration(configPath: Path = Path("./auto-release.json")) : Config
         config.minorPattern?.let { minorPattern = it }
         config.patchPattern?.let { patchPattern = it }
         config.prereleasePattern?.let { prereleasePattern = it }
+        config.extraFields?.let { extraFields = it }
     }
 }

@@ -2,8 +2,8 @@
 
 package no.elhub.tools.autorelease
 
-import no.elhub.tools.autorelease.log.Logger
 import java.io.File
+import no.elhub.tools.autorelease.log.Logger
 
 fun Process.inputStreamAsText() = this.inputStream.bufferedReader().use { it.readText().trim() }
 

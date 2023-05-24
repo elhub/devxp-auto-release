@@ -3,16 +3,13 @@ package no.elhub.tools.autorelease.io
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import no.elhub.tools.autorelease.io.MavenPomWriter.appendDistributionManagement
-import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
-import java.io.File
 import java.nio.file.Paths
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
+import no.elhub.tools.autorelease.config.Field
+import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
 
-@OptIn(ExperimentalPathApi::class)
 class MavenPomReaderTest : DescribeSpec({
 
     describe("A valid maven pom.xml file") {
@@ -40,6 +37,14 @@ class MavenPomReaderTest : DescribeSpec({
                     MavenPomReader.getProjectDistributionManagement(this) shouldBe null
                 }
             }
+
+            it("should get a custom Field") {
+                val properties = Field("properties", null)
+                val test = Field("test", null, properties)
+                val testNode = MavenPomReader.getField(testFile, test)
+                testNode?.nodeName shouldBe "test"
+                testNode?.textContent shouldBe "foo"
+            }
         }
 
         context("parent build file of a multi-module maven project") {
@@ -65,6 +70,15 @@ class MavenPomReaderTest : DescribeSpec({
             it("should get the version of the parent pom") {
                 MavenPomReader.getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
                 MavenPomReader.getProjectParentVersion(otherTestFile).textContent shouldBe "0.1.0-SNAPSHOT"
+            }
+
+            it("should get a custom Field") {
+                val properties = Field("properties", null)
+                val test = Field("test", null, properties)
+                val foo = Field("foo", null, test)
+                val fooNode = MavenPomReader.getField(testFile, foo)
+                fooNode?.nodeName shouldBe "foo"
+                fooNode?.textContent shouldBe "bar"
             }
         }
     }

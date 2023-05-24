@@ -5,14 +5,14 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.inspectors.forExactly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
+import java.nio.file.Paths
+import kotlin.io.path.readLines
+import no.elhub.tools.autorelease.config.JsonConfiguration
 import no.elhub.tools.autorelease.extensions.delete
+import no.elhub.tools.autorelease.io.MavenPomReader
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectParentVersion
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectVersion
-import java.nio.file.Paths
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.readLines
 
-@OptIn(ExperimentalPathApi::class)
 class VersionFileTest : DescribeSpec({
 
     afterSpec {
@@ -113,6 +113,19 @@ class VersionFileTest : DescribeSpec({
                     getProjectParentVersion(testFile).textContent shouldBe "0.1.0-SNAPSHOT"
                 }
             }
+        }
+
+        context("settings extra fields for pom.xml file") {
+            val config = JsonConfiguration(Paths.get("build/resources/test/maven-auto-release.json"))
+            VersionFile.setExtraFields(project, config, null)
+            MavenPomReader.getField(
+                Paths.get(config.extraFields?.file.toString()),
+                config.extraFields?.fields?.first()!!
+            )?.textContent shouldBe "42"
+            MavenPomReader.getField(
+                Paths.get(config.extraFields?.file.toString()),
+                config.extraFields?.fields?.last()!!
+            )?.textContent shouldBe "bar"
         }
     }
 

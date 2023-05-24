@@ -2,14 +2,12 @@ package no.elhub.tools.autorelease.io
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldNotBe
-import no.elhub.tools.autorelease.io.MavenPomWriter.appendDistributionManagement
-import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
 import java.nio.file.Paths
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createFile
 import kotlin.io.path.deleteIfExists
+import no.elhub.tools.autorelease.io.MavenPomWriter.appendDistributionManagement
+import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
 
-@OptIn(ExperimentalPathApi::class)
 class MavenPomWriterTest : DescribeSpec({
 
     describe("A valid maven pom.xml file") {

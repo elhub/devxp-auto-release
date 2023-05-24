@@ -1,0 +1,21 @@
+{
+  "extraFields": {
+    "file": "build/resources/test/pom.xml",
+    "fields": [
+      {
+        "name": "test",
+        "value": "42",
+        "parent": {
+          "name": "properties"
+        }
+      },
+      {
+        "name": "foo",
+        "value": "bar",
+        "parent": {
+          "name": "properties"
+        }
+      }
+    ]
+  }
+}
