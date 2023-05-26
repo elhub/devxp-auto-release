@@ -71,9 +71,32 @@ The positional parameter can be used to specify the working directory to analyze
 
 The app works by analyzing the new version from Git, and then writes the next version into the appropriate file used by the project type it is working on. The file with the updated version does _not_ need to be committed to git, though you can of course do so if you prefer. Note that the actual number present in the version file before auto-release is run, is not used by the app.
 
+### Configuration
+
+`auto-release` comes pre-configured with some sane defaults, which can be tweaked if needed via json config file: `java -jar auto-release.jar . -p gradle -c config.json`
+
+A sample config file looks like:
+
+```json
+{
+  "startingVersion": "0.1.0",
+  "tagPrefix": "v",
+  "snapshotSuffix": "SNAPSHOT",
+  "prereleaseSuffix": "RC",
+  "majorPattern": "[major]",
+  "minorPattern": "[minor]",
+  "patchPattern": "[patch]",
+  "prereleasePattern": "[rc]"
+}
+```
+
+All the properties are optional, and any properties that are not provided via config file will be set with the default values.
+
+### Project Types
+
 The app currently allows for the following default projects:
 
-### Gradle
+#### Gradle
 
 The project should contain a gradle.properties file, storing the project version in the form:
 
@@ -83,7 +106,7 @@ version=X.Y.Z
 
 The project must include a gradle wrapper (gradlew) for building and publishing the project. It assumes that the project can be published using the `publish` gradle task.
 
-### Maven
+#### Maven
 
 The project should contain a pom.xml file, storing the project version in the form:
 
@@ -95,7 +118,7 @@ The `pom.xml` file should be a valid maven project pom.
 
 It is assumed that the environment can run maven using the `mvn` command, and that the project can be built and published using the `deploy` maven goal.
 
-#### Multi-module Maven
+##### Multi-module Maven
 
 Multi-module maven projects are also supported. Given the parent `pom.xml` contains a list of `modules` in the form:
 
@@ -168,7 +191,7 @@ Sub-sub(-sub)*? modules are also supported so long as they follow the same rules
 └── pom.xml     <--- project-root
 ```
 
-#### Distribution Management Configuration
+##### Distribution Management Configuration
 
 It is possible to override `distributionManagement` node in the `pom.xml` file with auto-release using `--maven-distribution-management` option and a json string with the following format:
 
@@ -194,7 +217,7 @@ It is possible to override `distributionManagement` node in the `pom.xml` file w
 The `snapshotRepository` object is optional and can be omitted if not needed.
 The `layout` field is optional and will use `"default"` value if not specified otherwise.
 
-### Ansible
+#### Ansible
 
 Currently, we only support updating the version in the `galaxy.yml` file in the project's root directory, so in a way releasing is supported only for ansible collections.
 

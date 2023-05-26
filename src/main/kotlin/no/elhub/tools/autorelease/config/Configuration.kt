@@ -1,12 +1,26 @@
 package no.elhub.tools.autorelease.config
 
-object Configuration {
-    const val startingVersion = "0.1.0"
-    const val tagPrefix = "v"
-    const val snapshotSuffix = "SNAPSHOT"
-    const val prereleaseSuffix = "RC"
-    const val majorPattern = "[major]"
-    const val minorPattern = "[minor]"
-    const val patchPattern = "[patch]"
-    const val prereleasePattern = "[rc]"
+import kotlinx.serialization.Serializable
+
+interface Configuration {
+    val startingVersion: String
+    val tagPrefix: String
+    val snapshotSuffix: String
+    val prereleaseSuffix: String
+    val majorPattern: String
+    val minorPattern: String
+    val patchPattern: String
+    val prereleasePattern: String
 }
+
+@Serializable
+data class AutoReleaseConfig(
+    val startingVersion: String? = null,
+    val tagPrefix: String? = null,
+    val snapshotSuffix: String? = null,
+    val prereleaseSuffix: String? = null,
+    val majorPattern: String? = null,
+    val minorPattern: String? = null,
+    val patchPattern: String? = null,
+    val prereleasePattern: String? = null,
+)

@@ -3,11 +3,20 @@ package no.elhub.tools.autorelease
 import io.github.serpro69.semverkt.release.Increment
 import io.github.serpro69.semverkt.release.SemverRelease
 import io.github.serpro69.semverkt.release.configuration.PropertiesConfiguration
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import no.elhub.tools.autorelease.config.Configuration
+import no.elhub.tools.autorelease.config.DefaultConfiguration
+import no.elhub.tools.autorelease.config.JsonConfiguration
 import no.elhub.tools.autorelease.io.DistributionManagement
 import no.elhub.tools.autorelease.io.NpmPackageJsonWriter
 import no.elhub.tools.autorelease.log.Logger
@@ -20,12 +29,6 @@ import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
-import java.io.File
-import java.nio.file.Paths
-import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.TimeUnit
-import kotlin.system.exitProcess
 
 @CommandLine.Command(
     name = "auto-release",
@@ -132,6 +135,15 @@ class AutoRelease : Callable<Int> {
     )
     private var npmPublishRegistry: String? = null
 
+    @CommandLine.Option(
+        names = ["-c", "--config-path"],
+        description = [
+            "Path to auto-release json configuration file",
+        ],
+        required = false
+    )
+    private val configPath: Path? = null
+
     @ArgGroup(
         exclusive = true,
         multiplicity = "0..1",
@@ -144,20 +156,20 @@ class AutoRelease : Callable<Int> {
         val log = Logger(verboseMode)
         log.info("Processing a project of type $project...")
         val props = Properties().also {
+            val config: Configuration = configPath?.let { path -> JsonConfiguration(path) } ?: DefaultConfiguration
             it["git.repo.directory"] = Paths.get(path)
-            it["git.tag.prefix"] = Configuration.tagPrefix
+            it["git.tag.prefix"] = config.tagPrefix
             // git message configuration
-            it["git.message.major"] = Configuration.majorPattern
-            it["git.message.minor"] = Configuration.minorPattern
-            it["git.message.patch"] = Configuration.patchPattern
-            it["git.message.preRelease"] = Configuration.prereleasePattern
+            it["git.message.major"] = config.majorPattern
+            it["git.message.minor"] = config.minorPattern
+            it["git.message.patch"] = config.patchPattern
+            it["git.message.preRelease"] = config.prereleasePattern
             // version configuration
-            it["version.initialVersion"] = Configuration.startingVersion
-            it["version.preReleaseId"] = Configuration.prereleaseSuffix
-            it["version.snapshotSuffix"] = Configuration.snapshotSuffix
+            it["version.initialVersion"] = config.startingVersion
+            it["version.preReleaseId"] = config.prereleaseSuffix
+            it["version.snapshotSuffix"] = config.snapshotSuffix
         }
-        val config = PropertiesConfiguration(props)
-        with(SemverRelease(config)) {
+        with(SemverRelease(PropertiesConfiguration(props))) {
             val latestVersion = currentVersion()
             log.info("Current version: $latestVersion")
             val increaseVersion = if (promoteRelease) Increment.NONE else with(nextIncrement()) {
