@@ -40,6 +40,7 @@ project {
         additionalParams = listOf(
             "-Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml",
             "-Dsonar.dependencyCheck.jsonReportPath=build/reports/dependency-check-report.json",
+            "-Dsonar.dependencyCheck.htmlReportPath=build/reports/dependency-check-report.html",
         )
     )
 

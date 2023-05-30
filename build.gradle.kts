@@ -1,3 +1,5 @@
+import org.owasp.dependencycheck.reporting.ReportGenerator
+
 plugins {
     id("no.elhub.devxp.kotlin-application") version "0.1.0"
     kotlin("plugin.serialization") version "1.8.21"
@@ -40,3 +42,9 @@ tasks["startShadowScripts"].dependsOn(tasks["jar"])
 
 tasks["assemble"].dependsOn(tasks["shadowJar"])
 
+dependencyCheck {
+    formats = listOf(
+        ReportGenerator.Format.JSON,
+        ReportGenerator.Format.HTML,
+    )
+}
