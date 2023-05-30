@@ -17,14 +17,22 @@ interface Configuration {
 @Serializable
 data class ExtraFields(
     val file: String,
-    val fields: List<Field>,
+    val xmlns: String = "http://maven.apache.org/POM/4.0.0",
+    val fields: List<Field> = emptyList(),
 )
 
 @Serializable
 data class Field(
     val name: String,
-    val value: String? = null,
+    val value: String? = "",
     val parent: Field? = null,
+    val attributes: List<Attribute> = emptyList(),
+)
+
+@Serializable
+data class Attribute(
+    val name: String,
+    val value: String? = null,
 )
 
 @Serializable

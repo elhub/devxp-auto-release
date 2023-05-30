@@ -5,18 +5,22 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.inspectors.forExactly
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import java.nio.file.Paths
 import kotlin.io.path.readLines
+import no.elhub.tools.autorelease.config.Field
 import no.elhub.tools.autorelease.config.JsonConfiguration
 import no.elhub.tools.autorelease.extensions.delete
 import no.elhub.tools.autorelease.io.MavenPomReader
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectParentVersion
 import no.elhub.tools.autorelease.io.MavenPomReader.getProjectVersion
+import no.elhub.tools.autorelease.io.XmlReader
 
 class VersionFileTest : DescribeSpec({
 
     afterSpec {
         // Clean up the test files
+        Paths.get("build/resources/test/composite.xml").delete()
         Paths.get("build/resources/test/galaxy.yml").delete()
         Paths.get("build/resources/test/gradle.properties").delete()
         Paths.get("build/resources/test/pom.xml").delete()
@@ -115,9 +119,9 @@ class VersionFileTest : DescribeSpec({
             }
         }
 
-        context("settings extra fields for pom.xml file") {
+        context("settings extra fields and attributes for pom.xml file") {
             val config = JsonConfiguration(Paths.get("build/resources/test/maven-auto-release.json"))
-            VersionFile.setExtraFields(project, config, null)
+            VersionFile.setExtraFields(project, config, "369")
             MavenPomReader.getField(
                 Paths.get(config.extraFields?.file.toString()),
                 config.extraFields?.fields?.first()!!
@@ -125,7 +129,11 @@ class VersionFileTest : DescribeSpec({
             MavenPomReader.getField(
                 Paths.get(config.extraFields?.file.toString()),
                 config.extraFields?.fields?.last()!!
-            )?.textContent shouldBe "bar"
+            )?.textContent shouldBe "369"
+            MavenPomReader.getField(
+                Paths.get(config.extraFields?.file.toString()),
+                config.extraFields?.fields?.last()!!
+            )?.attributes?.getNamedItem("bar")?.nodeValue shouldBe "baz"
         }
     }
 
@@ -142,6 +150,35 @@ class VersionFileTest : DescribeSpec({
             val testFile = Paths.get("build/resources/test/package-test-version.json")
             val lines = testFile.readLines()
             lines.any { it.contains("\"version\":\"1.2.3\"") } shouldBe true
+        }
+    }
+
+    describe("A an xml file in a maven project") {
+        it("should update the custom xml file's field") {
+            // arrange
+            val config = JsonConfiguration(Paths.get("build/resources/test/composite-auto-release.json"))
+            val ef = config.extraFields!!
+            val reader = object : XmlReader(ef.xmlns) {}
+            val oldComposite = reader.getField(Paths.get(ef.file), ef.fields.first())
+            val oldProperties = reader.getFields(Paths.get(ef.file), Field("property", parent = ef.fields.first()))
+            // act
+            VersionFile.setExtraFields(ProjectType.MAVEN, config, "42")
+            // assert
+            val newComposite = reader.getField(Paths.get(ef.file), ef.fields.first())
+            val newProperties = reader.getFields(Paths.get(ef.file), Field("property", parent = ef.fields.first()))
+            newComposite shouldNotBe null
+            newComposite?.let { f ->
+                f.attributes.length shouldBe oldComposite?.attributes?.length
+                f.attributes.getNamedItem("revision").nodeValue shouldBe "42"
+            }
+            newProperties.length shouldBe oldProperties.length
+            List(3) { i ->
+                val (old, new) = newProperties.item(i) to oldProperties.item(i)
+                new.textContent shouldBe old.textContent
+                new.attributes.getNamedItem("many").nodeValue shouldBe old.attributes.getNamedItem("many").textContent
+                new.attributes.getNamedItem("name").nodeValue shouldBe old.attributes.getNamedItem("name").textContent
+                new.attributes.getNamedItem("type").nodeValue shouldBe old.attributes.getNamedItem("type").textContent
+            }
         }
     }
 })

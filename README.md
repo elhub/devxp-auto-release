@@ -89,6 +89,7 @@ A sample config file looks like:
   "prereleasePattern": "[rc]",
   "extraFields": {
     "file": "pom.xml",
+    "xmlns": "https://hello-world.test/1.0",
     "fields": [
       {
         "name": "hello",
@@ -102,7 +103,13 @@ A sample config file looks like:
         "value": "bar",
         "parent": {
           "name": "properties"
-        }
+        },
+        "attributes": [
+          {
+            "name": "revision",
+            "value": null
+          }
+        ]
       }
     ]
   }
@@ -260,7 +267,8 @@ Having the following in the json config file:
 
 Would look for a `/project/properties/foo` node in the `pom.xml` file in current working dir, and update its text content to "bar".
 
-The `value` field can be omitted, in which case it will be updated to the same value as the next version.
+The `value` field can be omitted (or set to `null`), in which case it will be updated to the same value as the next version.
+If the `value` field is set to an empty string, it won't be modified at all. This can be useful when an xml node attribute value needs to be modified instead of the node itself.
 
 #### Ansible
 

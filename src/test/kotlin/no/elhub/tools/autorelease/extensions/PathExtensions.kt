@@ -6,14 +6,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.isDirectory
 
 /**
  * Walks `this` [Path] and deletes all the contents.
  * If `this` receiver [Path] is not a directory - deletes the file itself.
  */
-@OptIn(ExperimentalPathApi::class)
 fun Path.delete() {
     if (this.isDirectory()) {
         Files.walkFileTree(

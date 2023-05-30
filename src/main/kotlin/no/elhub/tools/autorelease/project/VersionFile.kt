@@ -1,6 +1,5 @@
 package no.elhub.tools.autorelease.project
 
-import io.github.serpro69.semverkt.spec.Semver
 import java.nio.file.Files
 import java.nio.file.Files.createTempFile
 import java.nio.file.LinkOption
@@ -21,6 +20,7 @@ import no.elhub.tools.autorelease.io.MavenPomWriter
 import no.elhub.tools.autorelease.io.MavenPomWriter.appendDistributionManagement
 import no.elhub.tools.autorelease.io.MavenPomWriter.writeTo
 import no.elhub.tools.autorelease.io.NpmPackageJsonWriter
+import no.elhub.tools.autorelease.io.XmlReader
 import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
 import no.elhub.tools.autorelease.project.ProjectType.GRADLE
 import no.elhub.tools.autorelease.project.ProjectType.MAVEN
@@ -69,11 +69,19 @@ object VersionFile {
     fun setExtraFields(projectType: ProjectType, config: Configuration, newVersion: String?) {
         config.extraFields?.let { e ->
             val file = Paths.get(e.file)
+            val reader = object : XmlReader(e.xmlns) {}
             when (projectType) {
-                MAVEN -> e.fields.forEach { field ->
-                    getField(file, field)?.let {
-                        it.textContent = field.value ?: newVersion
-                        it.writeTo(file)
+                MAVEN -> {
+                    e.fields.forEach { field ->
+                        reader.getField(file, field)?.let { f ->
+                            field.attributes.forEach { a ->
+                                f.attributes.getNamedItem(a.name)?.let {
+                                    if (a.value != "") it.nodeValue = a.value ?: newVersion
+                                }
+                            }
+                            if (field.value != "") f.textContent = field.value ?: newVersion
+                            f.writeTo(file)
+                        }
                     }
                 }
                 else -> { // noop

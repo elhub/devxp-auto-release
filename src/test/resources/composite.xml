@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<composite name="PRO_25"
+           revision="3.96"
+           mode="active"
+           state="on"
+           xmlns="http://xmlns.oracle.com/sca/1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ui="http://xmlns.oracle.com/soa/designer/">
+    <property name="productVersion" type="xs:string" many="false">12.1.3.0.0</property>
+    <property name="oracle.composite.faultPolicyFile" type="xs:string" many="false">fault-policies.xml</property>
+    <property name="oracle.composite.faultBindingFile" type="xs:string" many="false">fault-bindings.xml</property>
+</composite>

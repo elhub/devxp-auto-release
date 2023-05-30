@@ -39,11 +39,12 @@ class MavenPomReaderTest : DescribeSpec({
             }
 
             it("should get a custom Field") {
-                val properties = Field("properties", null)
-                val test = Field("test", null, properties)
+                val project = Field("project", null)
+                val properties = Field("properties", null, project)
+                val test = Field("hello", null, properties)
                 val testNode = MavenPomReader.getField(testFile, test)
-                testNode?.nodeName shouldBe "test"
-                testNode?.textContent shouldBe "foo"
+                testNode?.nodeName shouldBe "hello"
+                testNode?.textContent shouldBe "world"
             }
         }
 
@@ -73,7 +74,8 @@ class MavenPomReaderTest : DescribeSpec({
             }
 
             it("should get a custom Field") {
-                val properties = Field("properties", null)
+                val project = Field("project", null)
+                val properties = Field("properties", null, project)
                 val test = Field("test", null, properties)
                 val foo = Field("foo", null, test)
                 val fooNode = MavenPomReader.getField(testFile, foo)
