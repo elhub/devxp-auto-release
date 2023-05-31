@@ -1,6 +1,7 @@
 package no.elhub.tools.autorelease.config
 
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import kotlin.io.path.Path
 
@@ -16,6 +17,7 @@ class JsonConfigurationTest : DescribeSpec({
             config.minorPattern shouldBe DefaultConfiguration.minorPattern
             config.patchPattern shouldBe DefaultConfiguration.patchPattern
             config.prereleasePattern shouldBe DefaultConfiguration.prereleasePattern
+            config.extra shouldContainExactly DefaultConfiguration.extra
         }
     }
 })

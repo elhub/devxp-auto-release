@@ -122,17 +122,19 @@ class VersionFileTest : DescribeSpec({
         context("settings extra fields and attributes for pom.xml file") {
             val config = JsonConfiguration(Paths.get("build/resources/test/maven-auto-release.json"))
             VersionFile.setExtraFields(project, config, "369")
+            config.extra.size shouldBe 1
+            val extraFile = config.extra.first()
             MavenPomReader.getField(
-                Paths.get(config.extraFields?.file.toString()),
-                config.extraFields?.fields?.first()!!
+                Paths.get(extraFile.file),
+                extraFile.fields.first()
             )?.textContent shouldBe "42"
             MavenPomReader.getField(
-                Paths.get(config.extraFields?.file.toString()),
-                config.extraFields?.fields?.last()!!
+                Paths.get(extraFile.file),
+                extraFile.fields.last()
             )?.textContent shouldBe "369"
             MavenPomReader.getField(
-                Paths.get(config.extraFields?.file.toString()),
-                config.extraFields?.fields?.last()!!
+                Paths.get(extraFile.file),
+                extraFile.fields.last()
             )?.attributes?.getNamedItem("bar")?.nodeValue shouldBe "baz"
         }
     }
@@ -157,7 +159,7 @@ class VersionFileTest : DescribeSpec({
         it("should update the custom xml file's field") {
             // arrange
             val config = JsonConfiguration(Paths.get("build/resources/test/composite-auto-release.json"))
-            val ef = config.extraFields!!
+            val ef = config.extra.first()
             val reader = object : XmlReader(ef.xmlns) {}
             val oldComposite = reader.getField(Paths.get(ef.file), ef.fields.first())
             val oldProperties = reader.getFields(Paths.get(ef.file), Field("property", parent = ef.fields.first()))

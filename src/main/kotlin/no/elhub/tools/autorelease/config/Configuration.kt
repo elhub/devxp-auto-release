@@ -11,11 +11,11 @@ interface Configuration {
     val minorPattern: String
     val patchPattern: String
     val prereleasePattern: String
-    val extraFields: ExtraFields?
+    val extra: List<Extra>
 }
 
 @Serializable
-data class ExtraFields(
+data class Extra(
     val file: String,
     val xmlns: String = "http://maven.apache.org/POM/4.0.0",
     val fields: List<Field> = emptyList(),
@@ -45,5 +45,5 @@ data class AutoReleaseConfig(
     val minorPattern: String? = null,
     val patchPattern: String? = null,
     val prereleasePattern: String? = null,
-    val extraFields: ExtraFields? = null,
+    val extra: List<Extra> = emptyList()
 )

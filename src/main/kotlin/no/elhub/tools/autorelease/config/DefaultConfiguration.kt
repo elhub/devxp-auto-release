@@ -9,5 +9,5 @@ object DefaultConfiguration : Configuration {
     override val minorPattern = "[minor]"
     override val patchPattern = "[patch]"
     override val prereleasePattern = "[rc]"
-    override val extraFields: ExtraFields? = null
+    override val extra: List<Extra> = emptyList()
 }

@@ -67,7 +67,7 @@ object VersionFile {
     }
 
     fun setExtraFields(projectType: ProjectType, config: Configuration, newVersion: String?) {
-        config.extraFields?.let { e ->
+        config.extra.forEach { e ->
             val file = Paths.get(e.file)
             val reader = object : XmlReader(e.xmlns) {}
             when (projectType) {

@@ -87,32 +87,34 @@ A sample config file looks like:
   "minorPattern": "[minor]",
   "patchPattern": "[patch]",
   "prereleasePattern": "[rc]",
-  "extraFields": {
-    "file": "pom.xml",
-    "xmlns": "https://hello-world.test/1.0",
-    "fields": [
-      {
-        "name": "hello",
-        "value": "world",
-        "parent": {
-          "name": "properties"
-        }
-      },
-      {
-        "name": "foo",
-        "value": "bar",
-        "parent": {
-          "name": "properties"
-        },
-        "attributes": [
-          {
-            "name": "revision",
-            "value": null
+  "extra": [
+    {
+      "file": "pom.xml",
+      "xmlns": "https://hello-world.test/1.0",
+      "fields": [
+        {
+          "name": "hello",
+          "value": "world",
+          "parent": {
+            "name": "properties"
           }
-        ]
-      }
-    ]
-  }
+        },
+        {
+          "name": "foo",
+          "value": "bar",
+          "parent": {
+            "name": "properties"
+          },
+          "attributes": [
+            {
+              "name": "revision",
+              "value": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -243,25 +245,27 @@ It is possible to override `distributionManagement` node in the `pom.xml` file w
 The `snapshotRepository` object is optional and can be omitted if not needed.
 The `layout` field is optional and will use `"default"` value if not specified otherwise.
 
-##### Extra Fields
+##### Extra Files
 
-It is possible to update additional fields in a pom.xml file via `extraFields` configuration parameter (currently only supported in json-based configuration).
+It is possible to update additional fields in xml files via `extra` configuration parameter (currently only supported in json-based configuration).
 Having the following in the json config file:
 
 ```json
 {
-  "extraFields": {
-    "file": "pom.xml",
-    "fields": [
-      {
-        "name": "foo",
-        "value": "bar",
-        "parent": {
-          "name": "properties"
+  "extra": [
+    {
+      "file": "pom.xml",
+      "fields": [
+        {
+          "name": "foo",
+          "value": "bar",
+          "parent": {
+            "name": "properties"
+          }
         }
-      }
-    ]
-  }
+      ]
+    }
+  ]
 }
 ```
 

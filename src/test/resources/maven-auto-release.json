@@ -1,33 +1,35 @@
 {
-  "extraFields": {
-    "file": "build/resources/test/pom.xml",
-    "fields": [
-      {
-        "name": "hello",
-        "value": "42",
-        "parent": {
-          "name": "properties",
+  "extra": [
+    {
+      "file": "build/resources/test/pom.xml",
+      "fields": [
+        {
+          "name": "hello",
+          "value": "42",
           "parent": {
-            "name": "project"
+            "name": "properties",
+            "parent": {
+              "name": "project"
+            }
+          }
+        },
+        {
+          "name": "foo",
+          "value": null,
+          "attributes": [
+            {
+              "name": "bar",
+              "value": "baz"
+            }
+          ],
+          "parent": {
+            "name": "properties",
+            "parent": {
+              "name": "project"
+            }
           }
         }
-      },
-      {
-        "name": "foo",
-        "value": null,
-        "attributes": [
-          {
-            "name": "bar",
-            "value": "baz"
-          }
-        ],
-        "parent": {
-          "name": "properties",
-          "parent": {
-            "name": "project"
-          }
-        }
-      }
-    ]
-  }
+      ]
+    }
+  ]
 }

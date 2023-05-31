@@ -1,18 +1,20 @@
 {
-  "extraFields": {
-    "file": "build/resources/test/composite.xml",
-    "xmlns": "http://xmlns.oracle.com/sca/1.0",
-    "fields": [
-      {
-        "name": "composite",
-        "value": "",
-        "attributes": [
-          {
-            "name": "revision",
-            "value": null
-          }
-        ]
-      }
-    ]
-  }
+  "extra": [
+    {
+      "file": "build/resources/test/composite.xml",
+      "xmlns": "http://xmlns.oracle.com/sca/1.0",
+      "fields": [
+        {
+          "name": "composite",
+          "value": "",
+          "attributes": [
+            {
+              "name": "revision",
+              "value": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
