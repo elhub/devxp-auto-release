@@ -3,13 +3,6 @@ package no.elhub.tools.autorelease
 import io.github.serpro69.semverkt.release.Increment
 import io.github.serpro69.semverkt.release.SemverRelease
 import io.github.serpro69.semverkt.release.configuration.PropertiesConfiguration
-import java.io.File
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.TimeUnit
-import kotlin.system.exitProcess
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -17,18 +10,30 @@ import kotlinx.serialization.json.decodeFromStream
 import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.config.DefaultConfiguration
 import no.elhub.tools.autorelease.config.JsonConfiguration
+import no.elhub.tools.autorelease.extensions.calculateNextVersion
+import no.elhub.tools.autorelease.extensions.commit
+import no.elhub.tools.autorelease.extensions.determineIncrement
+import no.elhub.tools.autorelease.extensions.setTag
 import no.elhub.tools.autorelease.io.DistributionManagement
 import no.elhub.tools.autorelease.io.NpmPackageJsonWriter
 import no.elhub.tools.autorelease.log.Logger
 import no.elhub.tools.autorelease.project.ProjectType
-import no.elhub.tools.autorelease.project.ProjectType.ANSIBLE
-import no.elhub.tools.autorelease.project.ProjectType.MAVEN
-import no.elhub.tools.autorelease.project.ProjectType.NPM
+import no.elhub.tools.autorelease.project.ProjectType.*
 import no.elhub.tools.autorelease.project.VersionFile
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.api.ResetCommand
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+
+private val processTimeout: Duration = 180.seconds
 
 @CommandLine.Command(
     name = "auto-release",
@@ -151,11 +156,11 @@ class AutoRelease : Callable<Int> {
     )
     private var distributionManagement: DistributionManagementOption? = null
 
-    @OptIn(ExperimentalSerializationApi::class)
-    override fun call(): Int {
-        val log = Logger(verboseMode)
-        log.info("Processing a project of type $project...")
-        val config: Configuration = configPath?.let { path -> JsonConfiguration(path) } ?: DefaultConfiguration
+    private val config: Configuration by lazy {
+        configPath?.let { path -> JsonConfiguration(path) } ?: DefaultConfiguration
+    }
+
+    private val semverConfig: PropertiesConfiguration by lazy {
         val props = Properties().also {
             it["git.repo.directory"] = Paths.get(path)
             it["git.tag.prefix"] = config.tagPrefix
@@ -169,109 +174,89 @@ class AutoRelease : Callable<Int> {
             it["version.preReleaseId"] = config.prereleaseSuffix
             it["version.snapshotSuffix"] = config.snapshotSuffix
         }
-        with(SemverRelease(PropertiesConfiguration(props))) {
+
+        PropertiesConfiguration(props)
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun call(): Int {
+        val log = Logger(verboseMode)
+        log.info("Processing a project of type $project...")
+
+        with(SemverRelease(semverConfig)) {
             val latestVersion = currentVersion()
             log.info("Current version: $latestVersion")
-            val increaseVersion = if (promoteRelease) Increment.NONE else with(nextIncrement()) {
-                log.debug("Next increment from cli option: $increment")
-                log.debug("Next increment from git commit: $this")
-                if (increment !in listOf(Increment.DEFAULT, Increment.NONE)) {
-                    if (this == Increment.NONE) this else increment
-                } else this
-            }
+
+            val increaseVersion = determineIncrement(log, preRelease, increment)
             log.info("Calculated version increment: '$increaseVersion'")
-            val nextVersion = if (promoteRelease) {
-                log.info("Promote to release...")
-                promoteToRelease()
-            } else if (preRelease) {
-                log.info("Create pre-release...")
-                createPreRelease(increaseVersion)
-            } else when (increaseVersion) {
-                Increment.MAJOR, Increment.MINOR, Increment.PATCH -> release(increaseVersion)
-                Increment.PRE_RELEASE -> {
-                    latestVersion?.preRelease?.let {
-                        release(increaseVersion)
-                    } ?: createPreRelease(Increment.DEFAULT)
-                }
-                Increment.DEFAULT, Increment.NONE -> latestVersion
-            }
+
+            val nextVersion = calculateNextVersion(log, promoteRelease, preRelease, increaseVersion, latestVersion)
             log.info("Next version: $nextVersion")
-            return if (!dryRun && nextVersion != latestVersion) {
-                project.versionRegex?.let {
-                    val buildFile = Paths.get(project.configFilePath)
-                    when (project) {
-                        MAVEN -> {
-                            distributionManagement?.let {
-                                log.info("Update distributionManagement configuration for maven project")
-                                val dm: DistributionManagement = it.distributionManagementFile
-                                    ?.let { f -> Json.decodeFromStream(f.inputStream()) }
-                                    ?: Json.decodeFromString(it.distributionManagementString)
-                                VersionFile.setMavenDistributionManagement(dm, buildFile)
-                            }
-                        }
-                        NPM -> npmPublishRegistry?.let {
-                            log.info("Update publishConfig in package.json for npm project")
-                            NpmPackageJsonWriter.updatePublishConfig(
-                                mapOf("registry" to it),
-                                buildFile.toFile()
-                            )
-                        }
-                        else -> { /*noop*/
+
+            if (dryRun || nextVersion == latestVersion) {
+                log.debug("Nothing to do. Exiting...")
+                return 0
+            }
+
+            project.versionRegex?.let {
+                val buildFile = Paths.get(project.configFilePath)
+                when (project) {
+                    MAVEN -> {
+                        distributionManagement?.let {
+                            log.info("Update distributionManagement configuration for maven project")
+                            val dm: DistributionManagement = it.distributionManagementFile
+                                ?.let { f -> Json.decodeFromStream(f.inputStream()) }
+                                ?: Json.decodeFromString(it.distributionManagementString)
+                            VersionFile.setMavenDistributionManagement(dm, buildFile)
                         }
                     }
-                    log.info("Set next version in ${project.configFilePath}...")
-                    VersionFile.setVersion(buildFile, project, String.format(project.versionFormat, nextVersion))
-                    VersionFile.setExtraFields(project, config, nextVersion.toString())
+
+                    NPM -> npmPublishRegistry?.let {
+                        log.info("Update publishConfig in package.json for npm project")
+                        NpmPackageJsonWriter.updatePublishConfig(
+                            mapOf("registry" to it),
+                            buildFile.toFile()
+                        )
+                    }
+
+                    else -> {
+                        /*noop*/
+                    }
                 }
-                val repo = Git.open(Paths.get(path).toFile())
-                if (project == ANSIBLE) repo.commit(project.configFilePath, "Release v$nextVersion")
-                repo.setTag("v$nextVersion")
+                log.info("Set next version in ${project.configFilePath}...")
+                VersionFile.setVersion(buildFile, project, String.format(project.versionFormat, nextVersion))
+                VersionFile.setExtraFields(project, config, nextVersion.toString())
+            }
+
+            return with(Git.open(Paths.get(path).toFile())) {
+                if (project == ANSIBLE) {
+                    commit(project.configFilePath, "Release v$nextVersion")
+                }
+
+                setTag("v$nextVersion")
+
                 if (publish && project.publishCommand.isNotEmpty()) {
                     log.info("Publish release...")
-                    val proc = Proc(File(path), Logger(verboseMode))
-                    val publishCommand = "${project.publishCommand} ${extraParams.joinToString(" ")}"
-                        .trim()
-                        .let { cmd ->
-                            when (project) {
-                                MAVEN -> System.getenv()["MAVEN_SETTINGS_PATH"]?.let { "$cmd --settings '$it'" } ?: cmd
-                                else -> cmd
-                            }
-                        }
-                    val cmd = proc.runCommand(publishCommand).also {
-                        it.waitFor(180, TimeUnit.SECONDS)
-                        log.info(it.inputStreamAsText())
-                    }
-                    cmd.exitValue()
+                    val processLauncher = Proc(File(path), Logger(verboseMode))
+                    val publishCommand = publishCommand()
+
+                    processLauncher.runCommand(publishCommand).also { process ->
+                        process.waitFor(processTimeout.inWholeSeconds, TimeUnit.SECONDS)
+                        log.info(process.inputStreamAsText())
+                    }.exitValue()
                 } else 0
-            } else {
-                log.debug("Nothing to do. Exiting...")
-                0
             }
         }
     }
 
-    private fun Git.setTag(tagName: String) {
-        Git(repository).use { git ->
-            git.tag().setName(tagName).setMessage(tagName).setAnnotated(true).call()
-            //git.push().setTransportConfigCallback(SshConfig(SSH_FILE_PATH, null)).setPushTags().call()
-        }
-    }
-
-    private fun Git.commit(file: String, msg: String) {
-        Git(repository).use { git ->
-            git.reset() // unstage changes if any
-                .setRef("HEAD")
-                .setMode(ResetCommand.ResetType.MIXED)
-                .call()
-
-            git.add().addFilepattern(file).call()
-
-            git.commit()
-                .setMessage(msg) // QUESTION should we have a default msg for commits?
-                .setAuthor("auto-release", "auto-release@elhub.cloud") // TODO make author details configurable
-                .call()
-        }
-    }
+    private fun publishCommand(): String =
+        "${project.publishCommand} ${extraParams.joinToString(" ")}".trim()
+            .let { cmd ->
+                when (project) {
+                    MAVEN -> System.getenv()["MAVEN_SETTINGS_PATH"]?.let { "$cmd --settings '$it'" } ?: cmd
+                    else -> cmd
+                }
+            }
 }
 
 object DistributionManagementOption {
