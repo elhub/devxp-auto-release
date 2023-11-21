@@ -37,9 +37,16 @@ class GradleProject(
 
     override fun publishCommand(): String = buildString {
         append("gradle")
-        if (clean) append(" clean")
+
+        if (clean) {
+            append(" clean")
+        }
+
         append(" assemble publish")
-        if (skipTests) append(" -x test")
+
+        if (skipTests) {
+            append(" -x test")
+        }
 
         extraParams.forEach { extraParam ->
             append(" $extraParam")

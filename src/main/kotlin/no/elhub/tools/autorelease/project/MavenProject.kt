@@ -62,9 +62,17 @@ class MavenProject(
 
     override fun publishCommand(): String = buildString {
         append("mvn")
-        if (clean) append(" clean")
+
+        if (clean) {
+            append(" clean")
+        }
+
         append(" deploy")
-        if (skipTests) append(" -DskipTests")
+
+        if (skipTests) {
+            append(" -DskipTests")
+        }
+
         append(" -DfailIfNoTests=false")
 
         extraParams.forEach { extraParam ->
