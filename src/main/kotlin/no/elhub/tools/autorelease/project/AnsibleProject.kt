@@ -4,7 +4,10 @@ import io.github.serpro69.semverkt.spec.Semver
 import no.elhub.tools.autorelease.log.Logger
 import java.nio.file.Files
 import java.nio.file.Paths
-import kotlin.io.path.*
+import kotlin.io.path.Path
+import kotlin.io.path.createTempFile
+import kotlin.io.path.readLines
+import kotlin.io.path.writeLines
 
 class AnsibleProject(
     override val configFilePath: String = "galaxy.yml"

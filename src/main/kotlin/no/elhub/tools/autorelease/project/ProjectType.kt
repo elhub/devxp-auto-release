@@ -1,6 +1,6 @@
 package no.elhub.tools.autorelease.project
 
-import java.util.*
+import java.util.Locale
 
 @Suppress("unused")
 enum class ProjectType {
