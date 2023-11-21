@@ -60,28 +60,33 @@ class MavenProject(
         parent.writeTo(buildFile)
     }
 
-    override fun publishCommand(): String = buildString {
-        append("mvn")
+    override fun publishCommand(): String {
+        val commandList = buildList {
+            add("mvn")
 
-        if (clean) {
-            append(" clean")
+            if (clean) {
+                add("clean")
+            }
+
+            add("deploy")
+
+            if (skipTests) {
+                add("-DskipTests")
+            }
+            add("-DfailIfNoTests=false")
+
+            extraParams.forEach { extraParam ->
+                add(extraParam)
+            }
+
+            val mavenSettingsPath = System.getenv()["MAVEN_SETTINGS_PATH"]
+
+            if (mavenSettingsPath != null) {
+                add("--settings '$mavenSettingsPath'")
+            }
         }
 
-        append(" deploy")
-
-        if (skipTests) {
-            append(" -DskipTests")
-        }
-
-        append(" -DfailIfNoTests=false")
-
-        extraParams.forEach { extraParam ->
-            append(" $extraParam")
-        }
-
-        val mavenSettingsPath = System.getenv()["MAVEN_SETTINGS_PATH"]
-
-        if (mavenSettingsPath != null) append(" --settings '$mavenSettingsPath'")
+        return commandList.joinToString(" ")
     }
 
     override fun setVersion(logger: Logger, nextVersion: Semver?) {

@@ -34,11 +34,17 @@ class NpmProject(
         NpmPackageJsonWriter.updateVersion(nextVersionString, buildPath.toFile())
     }
 
-    override fun publishCommand(): String = buildString {
-        append("npm run release")
+    override fun publishCommand(): String {
+        val commandList = buildList {
+            add("npm")
+            add("run")
+            add("release")
 
-        extraParams.forEach { extraParam ->
-            append(" $extraParam")
+            extraParams.forEach { extraParam ->
+                add(extraParam)
+            }
         }
+
+        return commandList.joinToString(" ")
     }
 }

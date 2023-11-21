@@ -35,21 +35,26 @@ class GradleProject(
         Files.move(tempFile, buildFile)
     }
 
-    override fun publishCommand(): String = buildString {
-        append("gradle")
+    override fun publishCommand(): String {
+        val commandList = buildList {
+            add("gradle")
 
-        if (clean) {
-            append(" clean")
+            if (clean) {
+                add("clean")
+            }
+
+            add("assemble")
+            add("publish")
+
+            if (skipTests) {
+                add("-x test")
+            }
+
+            extraParams.forEach { extraParam ->
+                add(extraParam)
+            }
         }
 
-        append(" assemble publish")
-
-        if (skipTests) {
-            append(" -x test")
-        }
-
-        extraParams.forEach { extraParam ->
-            append(" $extraParam")
-        }
+        return commandList.joinToString(" ")
     }
 }
