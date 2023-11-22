@@ -37,7 +37,7 @@ class GradleProject(
 
     override fun publishCommand(): String {
         val commandList = buildList {
-            add("./gradle")
+            add("./gradlew")
 
             if (clean) {
                 add("clean")
