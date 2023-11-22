@@ -11,7 +11,7 @@ fun SemverRelease.determineIncrement(
     promoteRelease: Boolean,
     autoReleaseIncrement: Increment
 ) = if (promoteRelease) Increment.NONE else with(nextIncrement()) {
-    log.debug("Next increment from cli option: ${autoReleaseIncrement}")
+    log.debug("Next increment from cli option: $autoReleaseIncrement")
     log.debug("Next increment from git commit: $this")
     if (autoReleaseIncrement !in listOf(Increment.DEFAULT, Increment.NONE)) {
         if (this == Increment.NONE) this else autoReleaseIncrement

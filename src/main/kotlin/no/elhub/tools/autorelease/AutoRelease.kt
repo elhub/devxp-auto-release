@@ -4,9 +4,6 @@ import io.github.serpro69.semverkt.release.Increment
 import io.github.serpro69.semverkt.release.SemverRelease
 import io.github.serpro69.semverkt.release.configuration.PropertiesConfiguration
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.config.DefaultConfiguration
 import no.elhub.tools.autorelease.config.JsonConfiguration
@@ -14,12 +11,9 @@ import no.elhub.tools.autorelease.extensions.calculateNextVersion
 import no.elhub.tools.autorelease.extensions.commit
 import no.elhub.tools.autorelease.extensions.determineIncrement
 import no.elhub.tools.autorelease.extensions.setTag
-import no.elhub.tools.autorelease.io.DistributionManagement
-import no.elhub.tools.autorelease.io.NpmPackageJsonWriter
 import no.elhub.tools.autorelease.log.Logger
-import no.elhub.tools.autorelease.project.ProjectType
+import no.elhub.tools.autorelease.project.*
 import no.elhub.tools.autorelease.project.ProjectType.*
-import no.elhub.tools.autorelease.project.VersionFile
 import org.eclipse.jgit.api.Git
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
@@ -60,7 +54,7 @@ class AutoRelease : Callable<Int> {
             "Default: \${DEFAULT-VALUE}."
         ]
     )
-    private var project: ProjectType = ProjectType.GENERIC
+    private var projectType: ProjectType = GENERIC
 
     @CommandLine.Option(
         names = ["-i", "--increment"],
@@ -149,6 +143,16 @@ class AutoRelease : Callable<Int> {
     )
     private val configPath: Path? = null
 
+    @CommandLine.Option(
+        names = ["--clean"],
+        description = [
+            "Run the publish command with the clean parameter (relevant for gradle/maven)",
+        ],
+        required = false,
+    )
+    private var clean: Boolean = false
+
+
     @ArgGroup(
         exclusive = true,
         multiplicity = "0..1",
@@ -178,10 +182,27 @@ class AutoRelease : Callable<Int> {
         PropertiesConfiguration(props)
     }
 
+    private val project: Project? by lazy {
+        when (projectType) {
+            GENERIC -> null
+            GRADLE -> GradleProject(clean = clean, skipTests = true, extraParams = extraParams.toList())
+            MAVEN -> MavenProject(
+                clean = clean,
+                skipTests = true,
+                extraParams = extraParams.toList(),
+                configuration = config,
+                distributionManagementOption = distributionManagement,
+            )
+
+            ANSIBLE -> AnsibleProject()
+            NPM -> NpmProject(npmPublishRegistry = npmPublishRegistry, extraParams = extraParams.toList())
+        }
+    }
+
     @OptIn(ExperimentalSerializationApi::class)
     override fun call(): Int {
         val log = Logger(verboseMode)
-        log.info("Processing a project of type $project...")
+        log.info("Processing a project of type $projectType...")
 
         with(SemverRelease(semverConfig)) {
             val latestVersion = currentVersion()
@@ -198,47 +219,23 @@ class AutoRelease : Callable<Int> {
                 return 0
             }
 
-            project.versionRegex?.let {
-                val buildFile = Paths.get(project.configFilePath)
-                when (project) {
-                    MAVEN -> {
-                        distributionManagement?.let {
-                            log.info("Update distributionManagement configuration for maven project")
-                            val dm: DistributionManagement = it.distributionManagementFile
-                                ?.let { f -> Json.decodeFromStream(f.inputStream()) }
-                                ?: Json.decodeFromString(it.distributionManagementString)
-                            VersionFile.setMavenDistributionManagement(dm, buildFile)
-                        }
-                    }
-
-                    NPM -> npmPublishRegistry?.let {
-                        log.info("Update publishConfig in package.json for npm project")
-                        NpmPackageJsonWriter.updatePublishConfig(
-                            mapOf("registry" to it),
-                            buildFile.toFile()
-                        )
-                    }
-
-                    else -> {
-                        /*noop*/
-                    }
-                }
-                log.info("Set next version in ${project.configFilePath}...")
-                VersionFile.setVersion(buildFile, project, String.format(project.versionFormat, nextVersion))
-                VersionFile.setExtraFields(project, config, nextVersion.toString())
-            }
+            // initialize project
+            project?.init(log)
+            
+            project?.setVersion(log, nextVersion)
 
             return with(Git.open(Paths.get(path).toFile())) {
-                if (project == ANSIBLE) {
-                    commit(project.configFilePath, "Release v$nextVersion")
+                val publishCommand = project?.publishCommand() ?: ""
+
+                if (project is AnsibleProject) {
+                    commit((project as AnsibleProject).configFilePath, "Release v$nextVersion")
                 }
 
                 setTag("v$nextVersion")
 
-                if (publish && project.publishCommand.isNotEmpty()) {
+                if (publish && publishCommand.isNotEmpty()) {
                     log.info("Publish release...")
                     val processLauncher = Proc(File(path), Logger(verboseMode))
-                    val publishCommand = publishCommand()
 
                     processLauncher.runCommand(publishCommand).also { process ->
                         process.waitFor(processTimeout.inWholeSeconds, TimeUnit.SECONDS)
@@ -249,14 +246,6 @@ class AutoRelease : Callable<Int> {
         }
     }
 
-    private fun publishCommand(): String =
-        "${project.publishCommand} ${extraParams.joinToString(" ")}".trim()
-            .let { cmd ->
-                when (project) {
-                    MAVEN -> System.getenv()["MAVEN_SETTINGS_PATH"]?.let { "$cmd --settings '$it'" } ?: cmd
-                    else -> cmd
-                }
-            }
 }
 
 object DistributionManagementOption {
