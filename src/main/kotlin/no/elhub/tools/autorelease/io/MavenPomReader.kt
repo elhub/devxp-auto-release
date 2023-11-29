@@ -52,7 +52,7 @@ object MavenPomReader : XmlReader("http://maven.apache.org/POM/4.0.0") {
     fun getProjectVersion(file: Path): Node? {
         val xmlDocument = builder.parse(file.toFile())
         val expression = "/ns:project/ns:version/text()"
-        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node?
+        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE)?.let { it as Node }
     }
 
     /**
@@ -63,6 +63,6 @@ object MavenPomReader : XmlReader("http://maven.apache.org/POM/4.0.0") {
     fun getProjectDistributionManagement(file: Path): Node? {
         val xmlDocument = builder.parse(file.toFile())
         val expression = "/ns:project/ns:distributionManagement"
-        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE) as Node?
+        return xPath.compile(expression).evaluate(xmlDocument, XPathConstants.NODE)?.let { it as Node }
     }
 }
