@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <devxp-build-configuration.version>0.50.3</devxp-build-configuration.version>
+        <devxp-build-configuration.version>0.103.0</devxp-build-configuration.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -55,8 +55,6 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>
-
-                <configuration/>
                 <executions>
                     <execution>
                         <id>compile</id>
