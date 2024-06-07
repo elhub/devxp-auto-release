@@ -6,8 +6,8 @@ import no.elhub.devxp.build.configuration.pipeline.jobs.gradleVerify
 elhubProject(DEVXP, "devxp-auto-release") {
     pipeline(withReleaseVersion = false) {
         sequential {
-            val verifyArtifacts = gradleVerify()
-            gradleAutoRelease(artifacts = listOf(verifyArtifacts))
+            gradleVerify()
+            //gradleAutoRelease(artifacts = listOf(verifyArtifacts))
         }
     }
 }
