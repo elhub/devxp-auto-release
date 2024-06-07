@@ -1,8 +1,6 @@
 package no.elhub.tools.autorelease.project
 
 import io.github.serpro69.semverkt.spec.Semver
-import no.elhub.tools.autorelease.DistributionManagementOption
-import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.log.Logger
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -11,7 +9,7 @@ import kotlin.io.path.createTempFile
 import kotlin.io.path.readLines
 import kotlin.io.path.writeLines
 
-class MakefileProject(
+class MakeProject(
     override val configFilePath: String = "project.properties",
     private val clean: Boolean = false,
     private val skipTests: Boolean = false,

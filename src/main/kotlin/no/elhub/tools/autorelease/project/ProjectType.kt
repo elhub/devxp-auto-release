@@ -7,7 +7,7 @@ enum class ProjectType {
     ANSIBLE,
     GENERIC,
     GRADLE,
-    MAKEFILE,
+    MAKE,
     MAVEN,
     NPM;
 

@@ -193,7 +193,7 @@ class AutoRelease : Callable<Int> {
                 configuration = config,
                 distributionManagementOption = distributionManagement,
             )
-            MAKEFILE -> MakefileProject(clean = clean, skipTests = true, extraParams = extraParams.toList())
+            MAKE -> MakeProject(clean = clean, skipTests = true, extraParams = extraParams.toList())
             ANSIBLE -> AnsibleProject()
             NPM -> NpmProject(npmPublishRegistry = npmPublishRegistry, extraParams = extraParams.toList())
         }
