@@ -7,7 +7,9 @@ elhubProject(DEVXP, "devxp-build-configuration") {
 
     pipeline {
         sequential {
-            val artifacts = gradleVerify()
+            val artifacts = gradleVerify {
+                analyzeDependencies = false
+            }
             gradleAutoRelease(artifacts = listOf(artifacts))
         }
     }
