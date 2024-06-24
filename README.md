@@ -12,19 +12,24 @@
 
 ## Table of Contents
 
-* [About](#about)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-  * [Gradle](#gradle)
-  * [Maven](#maven)
-  * [Multi-module Maven](#multi-module-maven)
-* [Testing](#testing)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [Owners](#owners)
-* [License](#license)
+- [auto-release](#auto-release)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Project Types](#project-types)
+      - [Gradle](#gradle)
+      - [Maven](#maven)
+        - [Multi-module Maven](#multi-module-maven)
+        - [Distribution Management Configuration](#distribution-management-configuration)
+        - [Extra Files](#extra-files)
+      - [Ansible](#ansible)
+  - [Testing](#testing)
+  - [Contributing](#contributing)
+  - [Owners](#owners)
 
 ## About
 
@@ -294,20 +299,11 @@ The full suite of tests can be run using:
 ./gradlew test
 ```
 
-## Roadmap
-
-See the [open issues](https://github.com/elhub/devxp-auto-release/issues) for a list of proposed features (and known issues).
-
 ## Contributing
 
-Contributing, issues and feature requests are welcome. See the
-[Contributing](https://github.com/elhub/devxp-auto-release/blob/main/CONTRIBUTING.md) file.
+Contributing, issues and feature requests are welcome. See the [Contributing](https://github.com/elhub/devxp-auto-release/blob/main/.github/CONTRIBUTING) file.
 
 ## Owners
 
-This project is developed by [Elhub](https://github.com/elhub). For the specific development group responsible for this
-code, see the [Codeowners](https://github.com/elhub/devxp-auto-release/blob/main/CODEOWNERS) file.
-
-## License
-
-This project is [MIT](https://github.com/elhub/devxp-auto-release/blob/main/LICENSE.md) licensed.
+This project is developed by [Elhub](https://www.elhub.no). For the specific development group responsible for this
+code, see the [Codeowners](https://github.com/elhub/devxp-auto-release/blob/main/.github/CODEOWNERS) file.
