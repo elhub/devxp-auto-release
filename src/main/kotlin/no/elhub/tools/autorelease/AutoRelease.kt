@@ -3,6 +3,7 @@ package no.elhub.tools.autorelease
 import io.github.serpro69.semverkt.release.Increment
 import io.github.serpro69.semverkt.release.SemverRelease
 import io.github.serpro69.semverkt.release.configuration.PropertiesConfiguration
+import io.github.serpro69.semverkt.spec.Semver
 import kotlinx.serialization.ExperimentalSerializationApi
 import no.elhub.tools.autorelease.config.Configuration
 import no.elhub.tools.autorelease.config.DefaultConfiguration
@@ -152,6 +153,15 @@ class AutoRelease : Callable<Int> {
     )
     private var clean: Boolean = false
 
+    @CommandLine.Option(
+        names = ["--version"],
+        description = [
+            "Explicitly set the next version",
+        ],
+        required = false
+    )
+    private var version: String? = null
+
 
     @ArgGroup(
         exclusive = true,
@@ -193,13 +203,13 @@ class AutoRelease : Callable<Int> {
                 configuration = config,
                 distributionManagementOption = distributionManagement,
             )
+
             MAKE -> MakeProject(clean = clean, skipTests = true, extraParams = extraParams.toList())
             ANSIBLE -> AnsibleProject()
             NPM -> NpmProject(npmPublishRegistry = npmPublishRegistry, extraParams = extraParams.toList())
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun call(): Int {
         val log = Logger(verboseMode)
         log.info("Processing a project of type $projectType...")
@@ -208,10 +218,19 @@ class AutoRelease : Callable<Int> {
             val latestVersion = currentVersion()
             log.info("Current version: $latestVersion")
 
-            val increaseVersion = determineIncrement(log, preRelease, increment)
-            log.info("Calculated version increment: '$increaseVersion'")
+            val nextVersion = if (!version.isNullOrEmpty()) {
+                // The version string can technically be changed since it is a var.
+                // If that happens during runtime we fail hard.
+                log.info("Using explicit version '$version'")
 
-            val nextVersion = calculateNextVersion(log, promoteRelease, preRelease, increaseVersion, latestVersion)
+                Semver(version!!)
+            } else {
+                val increaseVersion = determineIncrement(log, preRelease, increment)
+                log.info("Calculated version increment: '$increaseVersion'")
+
+                calculateNextVersion(log, promoteRelease, preRelease, increaseVersion, latestVersion)
+            }
+
             log.info("Next version: $nextVersion")
 
             if (dryRun || nextVersion == latestVersion) {
@@ -221,7 +240,7 @@ class AutoRelease : Callable<Int> {
 
             // initialize project
             project?.init(log)
-            
+
             project?.setVersion(log, nextVersion)
 
             return with(Git.open(Paths.get(path).toFile())) {

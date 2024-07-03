@@ -28,6 +28,7 @@ class VersionFileTest : DescribeSpec({
         Path("build/resources/test/composite.xml").delete()
         Path("build/resources/test/galaxy.yml").delete()
         Path("build/resources/test/gradle.properties").delete()
+        Path("build/resources/test/gradle-build-version.properties").delete()
         Path("build/resources/test/pom.xml").delete()
         Path("build/resources/test/package-test-version.json").delete()
         Path("build/resources/test/multi-module-maven").delete()
@@ -61,6 +62,23 @@ class VersionFileTest : DescribeSpec({
             val testFile = Path("build/resources/test/gradle.properties")
             val lines = testFile.readLines()
             lines shouldContain "version=1.2.3"
+        }
+    }
+
+    describe("It should be possible to use explicit versions") {
+        val project = GradleProject(
+            configFilePath = "build/resources/test/gradle-build-version.properties",
+            clean = true,
+            skipTests = true,
+            extraParams = emptyList(),
+        )
+
+        project.setVersion(logger, Semver( "0.1.0-737"))
+
+        it("should have its version set to 0.1.0-737") {
+            val testFile = Path("build/resources/test/gradle-build-version.properties")
+            val lines = testFile.readLines()
+            lines shouldContain "version=0.1.0-737"
         }
 
     }
