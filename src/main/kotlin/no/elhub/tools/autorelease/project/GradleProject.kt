@@ -26,8 +26,11 @@ class GradleProject(
         val nextVersionString = String.format(versionRegex.versionFormat, nextVersion)
         val tempFile = createTempFile(Path("."), null, null)
 
-        val lines = buildFile.readLines().map { line ->
+        var lines = buildFile.readLines().map { line ->
             if (versionRegex.regex.matches(line)) nextVersionString else line
+        }
+        if (lines.firstOrNull { it.contains(versionRegex.regex) } == null) {
+            lines = lines.plus(nextVersionString)
         }
 
         tempFile.writeLines(lines)
