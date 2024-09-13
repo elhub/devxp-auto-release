@@ -65,6 +65,23 @@ class VersionFileTest : DescribeSpec({
         }
     }
 
+    describe("A gradle.properties which is empty") {
+        val project = GradleProject(
+            configFilePath = "build/resources/test/gradle-empty-file.properties",
+            clean = true,
+            skipTests = true,
+            extraParams = emptyList(),
+        )
+
+        project.setVersion(logger, Semver(1, 2, 3))
+
+        it("should have its version added with value 1.2.3") {
+            val testFile = Path("build/resources/test/gradle-empty-file.properties")
+            val lines = testFile.readLines()
+            lines shouldContain "version=1.2.3"
+        }
+    }
+
     describe("It should be possible to use explicit versions") {
         val project = GradleProject(
             configFilePath = "build/resources/test/gradle-build-version.properties",
