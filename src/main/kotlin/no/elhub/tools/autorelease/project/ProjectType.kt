@@ -9,7 +9,8 @@ enum class ProjectType {
     GRADLE,
     MAKE,
     MAVEN,
-    NPM;
+    NPM,
+    NUGET;
 
     override fun toString() = this.name.lowercase(Locale.getDefault())
 }
