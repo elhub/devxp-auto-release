@@ -207,6 +207,7 @@ class AutoRelease : Callable<Int> {
             MAKE -> MakeProject(clean = clean, skipTests = true, extraParams = extraParams.toList())
             ANSIBLE -> AnsibleProject()
             NPM -> NpmProject(npmPublishRegistry = npmPublishRegistry, extraParams = extraParams.toList())
+            NUGET -> NuGetProject()
         }
     }
 
