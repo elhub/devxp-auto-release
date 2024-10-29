@@ -10,7 +10,7 @@ enum class ProjectType {
     MAKE,
     MAVEN,
     NPM,
-    NUGET;
+    DOTNET;
 
     override fun toString() = this.name.lowercase(Locale.getDefault())
 }

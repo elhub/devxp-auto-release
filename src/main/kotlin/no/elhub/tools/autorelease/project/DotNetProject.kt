@@ -2,14 +2,8 @@ package no.elhub.tools.autorelease.project
 
 import io.github.serpro69.semverkt.spec.Semver
 import no.elhub.tools.autorelease.log.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.io.path.Path
-import kotlin.io.path.createTempFile
-import kotlin.io.path.readLines
-import kotlin.io.path.writeLines
 
-class NuGetProject(
+class DotNetProject(
     override val configFilePath: String = ""
 ) : Project {
     override val versionRegex: VersionRegex = VersionRegex.ANSIBLE
