@@ -9,6 +9,7 @@ import kotlin.io.path.readLines
 import kotlin.io.path.writeLines
 
 class GradleProject(
+    private val module: String? = null,
     override val configFilePath: String = "gradle.properties",
     private val clean: Boolean,
     private val skipTests: Boolean,
@@ -46,8 +47,14 @@ class GradleProject(
                 add("clean")
             }
 
-            add("assemble")
-            add("publish")
+            module?.let {
+                add("$module:assemble")
+            } ?: add("assemble")
+
+            module?.let {
+                add("$module:publish")
+            } ?: add("publish")
+
 
             if (skipTests) {
                 add("-x test")

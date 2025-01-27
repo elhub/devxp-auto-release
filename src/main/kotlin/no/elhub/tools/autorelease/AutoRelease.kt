@@ -58,6 +58,15 @@ class AutoRelease : Callable<Int> {
     private var projectType: ProjectType = GENERIC
 
     @CommandLine.Option(
+        names = ["-m", "--module"],
+        description = [
+            "The module to publish.",
+            "Publishes all modules by default"
+        ]
+    )
+    private var module: String? = null
+
+    @CommandLine.Option(
         names = ["-i", "--increment"],
         description = [
             "Version component to bump",
@@ -195,7 +204,7 @@ class AutoRelease : Callable<Int> {
     private val project: Project? by lazy {
         when (projectType) {
             GENERIC -> null
-            GRADLE -> GradleProject(clean = clean, skipTests = true, extraParams = extraParams.toList())
+            GRADLE -> GradleProject(module, clean = clean, skipTests = true, extraParams = extraParams.toList())
             MAVEN -> MavenProject(
                 clean = clean,
                 skipTests = true,
