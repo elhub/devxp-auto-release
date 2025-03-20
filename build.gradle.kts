@@ -2,7 +2,7 @@ import org.owasp.dependencycheck.reporting.ReportGenerator
 
 plugins {
     id("no.elhub.devxp.kotlin-application") version "0.1.2"
-    kotlin("plugin.serialization") version "1.8.21"
+    kotlin("plugin.serialization") version "2.1.20"
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
