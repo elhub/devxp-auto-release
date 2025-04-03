@@ -1,18 +1,17 @@
-import org.owasp.dependencycheck.reporting.ReportGenerator
 
 plugins {
-    id("no.elhub.devxp.kotlin-application") version "0.1.2"
-    kotlin("plugin.serialization") version "1.8.21"
+    id("no.elhub.devxp.kotlin-application") version "0.3.1"
+    kotlin("plugin.serialization") version "2.1.20"
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
 
-val jgitVersion = "5.11.0.202103091610-r"
+val jgitVersion = "5.13.3.202401111512-r"
 
 dependencies {
     implementation(platform(libs.kotlin.bom))
     implementation(libs.kotlin.stdlib.jdk8)
-    implementation(libs.serialization.kotlinx.serialization.json)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.8.1")
     implementation("org.eclipse.jgit:org.eclipse.jgit:$jgitVersion")
     implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:$jgitVersion")
     implementation(libs.cli.picocli)

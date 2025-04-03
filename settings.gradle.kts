@@ -4,7 +4,7 @@ rootProject.name = "auto-release"
 
 pluginManagement {
     repositories {
-        maven(url = "https://jfrog.elhub.cloud:443/artifactory/elhub-plugins")
+        maven("https://jfrog.elhub.cloud:443/artifactory/elhub-mvn")
     }
 }
 
@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("libs") {
-            from("no.elhub.devxp:devxp-version-catalog:0.4.3")
+            from("no.elhub.devxp:devxp-version-catalog:0.6.1")
         }
     }
 }
