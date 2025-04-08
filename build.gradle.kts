@@ -1,6 +1,6 @@
 
 plugins {
-    id("no.elhub.devxp.kotlin-application") version "0.3.1"
+    id("no.elhub.devxp.kotlin-application") version "0.5.0"
     kotlin("plugin.serialization") version "2.1.20"
 }
 
