@@ -13,9 +13,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.8.1")
     implementation("org.eclipse.jgit:org.eclipse.jgit:$jgitVersion")
     implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:$jgitVersion")
-    implementation("info.picocli:picocli:4.7.5")
-    implementation("org.slf4j:slf4j-api:2.0.9")
-    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("info.picocli:picocli:4.7.7")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
     implementation("io.github.serpro69:semver.kt-release:0.4.6")
 
     testImplementation("commons-io:commons-io:2.18.0")
