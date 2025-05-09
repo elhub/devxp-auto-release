@@ -5,7 +5,7 @@ plugins {
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
 
-val jgitVersion = "5.13.3.202401111512-r"
+val jgitVersion = "7.2.0.202503040940-r"
 
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
