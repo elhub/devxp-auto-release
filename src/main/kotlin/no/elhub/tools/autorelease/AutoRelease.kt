@@ -225,7 +225,7 @@ class AutoRelease : Callable<Int> {
         log.info("Processing a project of type $projectType...")
 
         with(SemverRelease(semverConfig)) {
-            val latestVersion = currentVersion()
+            val latestVersion = currentVersion(null)
             log.info("Current version: $latestVersion")
 
             val nextVersion = if (!version.isNullOrEmpty()) {
