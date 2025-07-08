@@ -1,6 +1,6 @@
 plugins {
     id("no.elhub.devxp.kotlin-application") version "0.7.7"
-    kotlin("plugin.serialization") version "2.1.21"
+    kotlin("plugin.serialization") version "2.2.0"
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
@@ -10,7 +10,7 @@ val jgitVersion = "7.3.0.202506031305-r"
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.9.0")
     implementation("org.eclipse.jgit:org.eclipse.jgit:$jgitVersion")
     implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:$jgitVersion")
     implementation("info.picocli:picocli:4.7.7")
