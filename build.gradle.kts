@@ -1,5 +1,5 @@
 plugins {
-    id("no.elhub.devxp.kotlin-application") version "0.7.8"
+    id("no.elhub.devxp.kotlin-application") version "0.7.9"
     kotlin("plugin.serialization") version "2.2.0"
 }
 
@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation("commons-io:commons-io:2.19.0")
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
-    testImplementation("io.mockk:mockk:1.14.4")
+    testImplementation("io.mockk:mockk:1.14.5")
 }
 
 val applicationMainClass: String by project
