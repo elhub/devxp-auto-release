@@ -18,7 +18,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.17")
     implementation("io.github.serpro69:semver.kt-release:0.13.0")
 
-    testImplementation("commons-io:commons-io:2.19.0")
+    testImplementation("commons-io:commons-io:2.20.0")
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
     testImplementation("io.mockk:mockk:1.14.4")
 }
