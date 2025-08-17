@@ -1,6 +1,6 @@
 plugins {
     id("no.elhub.devxp.kotlin-application") version "0.7.10"
-    kotlin("plugin.serialization") version "2.2.0"
+    kotlin("plugin.serialization") version "2.2.10"
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
