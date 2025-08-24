@@ -19,7 +19,7 @@ dependencies {
     implementation("io.github.serpro69:semver.kt-release:0.13.0")
 
     testImplementation("commons-io:commons-io:2.20.0")
-    testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+    testImplementation("io.kotest:kotest-runner-junit5:6.0.0")
     testImplementation("io.mockk:mockk:1.14.5")
 }
 
