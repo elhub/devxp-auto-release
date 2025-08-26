@@ -1,26 +1,21 @@
 plugins {
-    id("no.elhub.devxp.kotlin-application") version "0.7.10"
-    kotlin("plugin.serialization") version "2.2.10"
+    alias(libs.plugins.elhub.gradle)
+    alias(libs.plugins.serialization)
 }
 
 description = "Implement automated semantic release for gradle, maven and ansible projects."
 
-val jgitVersion = "7.3.0.202506031305-r"
-
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.9.0")
-    implementation("org.eclipse.jgit:org.eclipse.jgit:$jgitVersion")
-    implementation("org.eclipse.jgit:org.eclipse.jgit.ssh.jsch:$jgitVersion")
-    implementation("info.picocli:picocli:4.7.7")
-    implementation("org.slf4j:slf4j-api:2.0.17")
-    implementation("org.slf4j:slf4j-simple:2.0.17")
-    implementation("io.github.serpro69:semver.kt-release:0.13.0")
-
-    testImplementation("commons-io:commons-io:2.20.0")
-    testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
-    testImplementation("io.mockk:mockk:1.14.5")
+    implementation(platform(libs.kotlin.bom))
+    implementation(libs.git.jgit)
+    implementation(libs.git.jgit.ssh)
+    implementation(libs.cli.picocli)
+    implementation(libs.bundles.logging)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.serpro69.semver)
+    testImplementation(libs.apache.commons.io)
+    implementation(libs.test.kotest.runner.junit5)
+    testImplementation(libs.test.mockk)
 }
 
 val applicationMainClass: String by project
