@@ -8,7 +8,7 @@ typeId: APPLICATION
 ownerId: "ari:cloud:identity::team/e6119202-0d8b-4174-bf04-7f1421525c1e"
 fields:
   tier: 4
-  lifecycle: Active
+  lifecycle: Deprecated
 configVersion: 1
 links:
   - name: "GitHub Repository"

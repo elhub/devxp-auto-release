@@ -1,35 +1,8 @@
 # auto-release
 
-[<img src="https://img.shields.io/badge/repo-github-blue" alt="">](https://github.com/elhub/devxp-auto-release)
-[<img src="https://img.shields.io/badge/issues-jira-orange" alt="">](https://jira.elhub.cloud/issues/?jql=project%20%3D%20%22Team%20Dev%22%20AND%20component%20%3D%20devxp-auto-release%20AND%20status%20!%3D%20Done)
-[<img src="https://teamcity.elhub.cloud/app/rest/builds/buildType:(id:DevXp_DevXpAutoRelease_PublishDocs)/statusIcon" alt="">](https://teamcity.elhub.cloud/project/DevXp_DevXpAutoRelease?mode=builds#all-projects)
-[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=alert_status" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
-[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=ncloc" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
-[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=bugs" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
-[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=vulnerabilities" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
-[<img src="https://sonar.elhub.cloud/api/project_badges/measure?project=no.elhub.devxp%3Adevxp-auto-release&metric=coverage" alt="">](https://sonar.elhub.cloud/dashboard?id=no.elhub.devxp%3Adevxp-auto-release)
-
-
-## Table of Contents
-
-- [auto-release](#auto-release)
-  - [Table of Contents](#table-of-contents)
-  - [About](#about)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-  - [Usage](#usage)
-    - [Configuration](#configuration)
-    - [Project Types](#project-types)
-      - [Gradle](#gradle)
-      - [Maven](#maven)
-        - [Multi-module Maven](#multi-module-maven)
-        - [Distribution Management Configuration](#distribution-management-configuration)
-        - [Extra Files](#extra-files)
-      - [Ansible](#ansible)
-  - [Testing](#testing)
-  - [Contributing](#contributing)
-  - [Owners](#owners)
+> [!NOTE]
+> This application has been deprecated and will not be developed further. We now handle release tagging directly
+> through our CI/CD jobs.
 
 ## About
 
@@ -72,13 +45,17 @@ To run the project on the existing repository for a gradle project, use:
 java -jar auto-release.jar . -p gradle
 ```
 
-The positional parameter can be used to specify the working directory to analyze. The "-p" option is used to specify which type of project that is being analyzed.
+The positional parameter can be used to specify the working directory to analyze. The "-p" option is used to specify which type of project that is
+being analyzed.
 
-The app works by analyzing the new version from Git, and then writes the next version into the appropriate file used by the project type it is working on. The file with the updated version does _not_ need to be committed to git, though you can of course do so if you prefer. Note that the actual number present in the version file before auto-release is run, is not used by the app.
+The app works by analyzing the new version from Git, and then writes the next version into the appropriate file used by the project type it is working on.
+The file with the updated version does _not_ need to be committed to git, though you can of course do so if you prefer. Note that the actual number present
+in the version file before auto-release is run, is not used by the app.
 
 ### Configuration
 
-`auto-release` comes pre-configured with some sane defaults, which can be tweaked if needed via json config file: `java -jar auto-release.jar . -p gradle -c config.json`
+`auto-release` comes pre-configured with some sane defaults, which can be tweaked if needed via json config file:
+`java -jar auto-release.jar . -p gradle -c config.json`
 
 A sample config file looks like:
 
@@ -137,7 +114,8 @@ The project should contain a gradle.properties file, storing the project version
 version=X.Y.Z
 ```
 
-The project must include a gradle wrapper (gradlew) for building and publishing the project. It assumes that the project can be published using the `publish` gradle task.
+The project must include a gradle wrapper (gradlew) for building and publishing the project. It assumes that the project can be published using
+the `publish` gradle task.
 
 #### Maven
 
@@ -226,7 +204,8 @@ Sub-sub(-sub)*? modules are also supported so long as they follow the same rules
 
 ##### Distribution Management Configuration
 
-It is possible to override `distributionManagement` node in the `pom.xml` file with auto-release using `--maven-distribution-management` option and a json string with the following format:
+It is possible to override `distributionManagement` node in the `pom.xml` file with auto-release using `--maven-distribution-management` option and a
+json string with the following format:
 
 ```json
 {
@@ -277,11 +256,13 @@ Having the following in the json config file:
 Would look for a `/project/properties/foo` node in the `pom.xml` file in current working dir, and update its text content to "bar".
 
 The `value` field can be omitted (or set to `null`), in which case it will be updated to the same value as the next version.
-If the `value` field is set to an empty string, it won't be modified at all. This can be useful when an xml node attribute value needs to be modified instead of the node itself.
+If the `value` field is set to an empty string, it won't be modified at all. This can be useful when an xml node attribute value needs to be
+modified instead of the node itself.
 
 #### Ansible
 
-Currently, we only support updating the version in the `galaxy.yml` file in the project's root directory, so in a way releasing is supported only for ansible collections.
+Currently, we only support updating the version in the `galaxy.yml` file in the project's root directory, so in a way releasing is supported only
+for ansible collections.
 
 The project should contain a `galaxy.yml` file, storing the project version in the form:
 
@@ -301,7 +282,8 @@ The full suite of tests can be run using:
 
 ## Contributing
 
-Contributing, issues and feature requests are welcome. See the [Contributing](https://github.com/elhub/devxp-auto-release/blob/main/.github/CONTRIBUTING) file.
+Contributing, issues and feature requests are welcome. See the [Contributing](https://github.com/elhub/devxp-auto-release/blob/main/.github/CONTRIBUTING)
+file.
 
 ## Owners
 
